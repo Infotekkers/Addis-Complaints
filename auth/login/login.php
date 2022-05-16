@@ -1,0 +1,146 @@
+<?php
+
+include "../../config/db.php";
+
+session_start();
+
+$show_notification_message = false;
+$notification_message_content = "";
+
+function showNotification($notificationMessage){
+    $show_notification_message = true;
+    $notification_message_content = $notificationMessage;
+    include '../../inc/notification.php';
+}
+
+function loginUser($connection) {
+    $emailInput = filter_var($_POST['email'],FILTER_SANITIZE_EMAIL);
+    $passwordInput = filter_var($_POST['password'],FILTER_SANITIZE_EMAIL);
+      
+    $stmt = $connection->prepare("SELECT password,isActive,attemptCount FROM users WHERE email=?");
+    $stmt->bind_param('s',$emailInput);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $result = $result->fetch_array(MYSQLI_ASSOC);
+
+    $possiblePassword = $result['password'];
+
+
+    // account locked
+    if($result['attemptCount'] == 5){
+        showNotification("Account has been locked on too many attempts.");
+    }
+    else if (password_verify($passwordInput ,  $possiblePassword)) {
+        // if deactivated
+        if($result['isActive'] == 0){
+            showNotification("Account has been deactivated by admin.");
+        }else{
+            //   get user info and redirect'
+            $stmt = $connection->prepare("SELECT id,full_name FROM users WHERE email=?");
+            $stmt->bind_param('s',$emailInput);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $result = $result->fetch_array(MYSQLI_ASSOC);
+
+            $_SESSION['uid'] = $result['id'];
+            $_SESSION['name'] = $result['full_name'];
+            
+
+            // reset attempt count
+            $stmt = $connection->prepare("UPDATE users SET attemptCount=0 WHERE email=?");
+            $stmt->bind_param('s',$emailInput);
+            $stmt->execute();
+
+            header("location:../../dashboard/home.php");
+        }
+    } else if($result['password']) {
+        
+        // increase attempt count
+        $newAttemptCount = $result['attemptCount'] + 1;
+        $remainingAttempts = 5 - $newAttemptCount;
+        $stmt = $connection->prepare("UPDATE users SET attemptCount=? WHERE email=?");
+        $stmt->bind_param('is',$newAttemptCount,$emailInput);
+        $stmt->execute();
+        showNotification("Invalid email/password combination. ". $remainingAttempts . " tries remaining!");
+    }
+}
+
+// on post
+if ($_POST) {
+    loginUser($connection);
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body class='login_page_body'>
+    <div id="notification_container"></div>
+
+    <!-- Left -->
+    <section class="login_page_left_container">
+
+        <p class="login_page_left_title">Addis Complaints </div>
+
+        <form action="" class="login_page_form_container" method="POST">
+            <!-- Title -->
+            <h1>Log in</h1>
+
+
+            <!-- Sub Text -->
+            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Sequi quaerat quod maxime ex rerum.
+                Consequatur
+                sint vero odit suscipit, dicta maiores dolores cum ipsam id?</p>
+
+
+            <!-- Form Inputs-->
+            <div>
+                <!-- Email -->
+                <div class="input_container">
+                    <label for="email">Email : </label>
+                    <input type="text" name="email" required>
+                </div>
+
+                <!-- Password -->
+                <div class="input_container">
+                    <label for="password">Password : </label>
+                    <input type="text" name="password" required>
+                </div>
+
+
+                <!-- Create Button -->
+                <input type="submit" value="Log in" class="login_page_button">
+
+
+                <!-- Login redirect -->
+                <div class="login_page_redirect">Don't have an account? <a href="../register/register.php">Sign up</a>
+                </div>
+            </div>
+
+
+        </form>
+    </section>
+
+    <!-- Right -->
+    <section class='login_page_right_container'>
+
+
+        <div class="login_page_right_text">
+            <h1>Addis Ababa, Ethiopia</h1>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Non vero dolorum
+                quas minus, nemo repudiandae! Cumque temporibus voluptatem mollitia repellendus expedita. Quam at in
+                consequuntur.</p>
+        </div>
+    </section>
+</body>
+
+</html>
