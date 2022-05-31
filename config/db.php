@@ -11,4 +11,3 @@
     if($connection -> connect_error){
         die('Connection to DB Failed' . $connection->connect_error);
     }
-?>

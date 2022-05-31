@@ -6,76 +6,95 @@ $show_notification_message = false;
 $notification_message_content = "";
 
 
-function showNotification($notificationMessage){
+function showNotification($notificationMessage)
+{
     $show_notification_message = true;
     $notification_message_content = $notificationMessage;
     include '../../inc/notification.php';
 }
 
-function registerUser($connection) {
-    $fullNameInput = filter_var( $_POST['fullName'], FILTER_SANITIZE_STRING);
-    $fullNamePattern ="/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
+function registerUser($connection)
+{
+    try {
+        $fullNameInput = filter_var($_POST['fullName'], FILTER_SANITIZE_SPECIAL_CHARS);
+        $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
 
-    echo $fullNameInput;
-    
-    $emailInput = filter_var($_POST['email'],FILTER_SANITIZE_EMAIL);
-    $emailPattern = "/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/";
-    
-    $passwordInput = filter_var($_POST['password'],FILTER_SANITIZE_EMAIL);
-    $passwordPattern = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/";
-    $confirmPasswordInput = $_POST['confirmPassword'];
 
-    
-    // check full name
-    if(!preg_match($fullNamePattern,$fullNameInput) || strlen($fullNameInput) > 24){
-        showNotification("Invalid Name");
-    }
-    
-    // check email
-    if(!preg_match($emailPattern,$emailInput)){
-        showNotification("Invalid Email");
-    }
-    
-    // check password
-    if(!preg_match($passwordPattern,$passwordInput) || strlen($passwordInput) > 24){
-        showNotification("Invalid Password");
-    }
-    
-    // check password match
-    if($confirmPasswordInput != $passwordInput){
-        showNotification("Passwords do not match");
-    }
-    
-    else if(preg_match($fullNamePattern,$fullNameInput)){
-  
-        $stmt = $connection->prepare("SELECT email FROM users WHERE email=?");
-        $stmt->bind_param('s',$emailInput);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+        $emailPattern = "/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/";
 
-        // if email already exists
-        if($result->num_rows == 1){
-            showNotification("Email already in use");
+        $passwordInput = filter_var($_POST['password'], FILTER_SANITIZE_EMAIL);
+        $passwordPattern = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/";
+        $confirmPasswordInput = $_POST['confirmPassword'];
+
+
+        // check full name
+        if (!preg_match($fullNamePattern, $fullNameInput) || strlen($fullNameInput) > 24) {
+            showNotification("Invalid Name");
         }
-        // if all good
-        else{
-            // hash password
-            $passwordHash = password_hash($passwordInput, PASSWORD_BCRYPT);
 
-            // create prepared statements
-            $stmt = $connection->prepare("INSERT INTO users (id, full_name, email,password,isActive,attemptCount) VALUES ('', ?, ?, ?, 1 , 0)");
-            $stmt->bind_param('sss',$fullNameInput,$emailInput,$passwordHash);
+        // check email
+        if (!preg_match($emailPattern, $emailInput)) {
+            showNotification("Invalid Email");
+        }
+
+        // check password
+        if (!preg_match($passwordPattern, $passwordInput) || strlen($passwordInput) > 24) {
+            showNotification("Invalid Password");
+        }
+
+        // check password match
+        if ($confirmPasswordInput != $passwordInput) {
+            showNotification("Passwords do not match");
+        } else if (preg_match($fullNamePattern, $fullNameInput)) {
+
+            $stmt = $connection->prepare("SELECT email FROM users WHERE email=?");
+            $stmt->bind_param('s', $emailInput);
             $stmt->execute();
             $result = $stmt->get_result();
 
-            header("location:../login/login.php");
+            // if email already exists
+            if ($result->num_rows == 1) {
+                showNotification("Email already in use");
+            }
+            // if all good
+            else {
+                // hash password
+                $passwordHash = password_hash($passwordInput, PASSWORD_BCRYPT);
+
+                // create prepared statements
+                $stmt = $connection->prepare("INSERT INTO users (id, full_name, email,password,isActive,attemptCount) VALUES ('', ?, ?, ?, 1 , 0)");
+                $stmt->bind_param('sss', $fullNameInput, $emailInput, $passwordHash);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                header("location:../login/login.php");
+            }
         }
-    }   
+    } catch (Exception $e) {
+        showNotification("Something Went Wrong");
+    }
 }
 
 // on post
 if ($_POST) {
-    registerUser($connection);
+
+    try {
+        $secret = "6LdM_jMgAAAAAHomg-xBvg2IXJMljM-mJMEPAtU8";
+        $response = $_POST['g-recaptcha-response'];
+        $remoteip = $_SERVER['REMOTE_ADDR'];
+        $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response&remoteip=$remoteip";
+        $data = file_get_contents($url);
+        $row = json_decode($data, true);
+        if ($row['success'] == "true") {
+            registerUser($connection);
+        } else {
+            // header("Refresh:0");
+            showNotification("Captcha Failed");
+        }
+    } catch (Exception $e) {
+        showNotification("Something Went Wrong");
+    }
 }
 ?>
 
@@ -135,6 +154,11 @@ if ($_POST) {
                     <input type="text" name="confirmPassword" required>
                 </div>
 
+                <!-- Captcha -->
+                <div class="captcha_container">
+                    <div class="g-recaptcha" data-sitekey="6LdM_jMgAAAAAC7VXyp8sdSNulMdZa8s68zNDsWE"></div>
+                </div>
+
 
                 <!-- Create Button -->
                 <button class="register_page_button">Create my account</button>
@@ -162,5 +186,8 @@ if ($_POST) {
         </div>
     </section>
 </body>
+
+<!-- Google Captcha v2 -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 </html>

@@ -16,64 +16,100 @@ function showNotification($notificationMessage)
 
 function loginUser($connection)
 {
-    $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    $passwordInput = filter_var($_POST['password'], FILTER_SANITIZE_EMAIL);
 
-    $stmt = $connection->prepare("SELECT password,isActive,attemptCount FROM users WHERE email=?");
-    $stmt->bind_param('s', $emailInput);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $result = $result->fetch_array(MYSQLI_ASSOC);
+    try {
+        $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_SPECIAL_CHARS);
+        $passwordInput = filter_var($_POST['password'], FILTER_SANITIZE_EMAIL);
+        $session = filter_var($_POST['session'], FILTER_SANITIZE_SPECIAL_CHARS);
+
+        $stmt = $connection->prepare("SELECT password,isActive,attemptCount FROM users WHERE email=?");
+        $stmt->bind_param('s', $emailInput);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $result = $result->fetch_array(MYSQLI_ASSOC);
 
 
 
-    // no account
-    if (empty($result)) {
-        showNotification("Invalid email/password combination.");
-    } else {
-        $possiblePassword = $result['password'];
-        // account locked
-        if ($result['attemptCount'] == 5) {
-            showNotification("Account has been locked on too many attempts.");
-        } else if (password_verify($passwordInput,  $possiblePassword)) {
-            // if deactivated
-            if ($result['isActive'] == 0) {
-                showNotification("Account has been deactivated by admin.");
-            } else {
-                //   get user info and redirect'
-                $stmt = $connection->prepare("SELECT id,full_name FROM users WHERE email=?");
+        if ($session != "123456gotem") {
+            showNotification("Malicious Attempt.");
+
+            // LOCK
+            if (!empty($result)) {
+                $stmt = $connection->prepare("UPDATE users SET attemptCount=5 WHERE email=?");
                 $stmt->bind_param('s', $emailInput);
                 $stmt->execute();
-                $result = $stmt->get_result();
-                $result = $result->fetch_array(MYSQLI_ASSOC);
-
-                $_SESSION['uid'] = $result['id'];
-                $_SESSION['name'] = $result['full_name'];
-
-
-                // reset attempt count
-                $stmt = $connection->prepare("UPDATE users SET attemptCount=0 WHERE email=?");
-                $stmt->bind_param('s', $emailInput);
-                $stmt->execute();
-
-                header("location:../../dashboard/home.php");
             }
-        } else if ($result['password']) {
+        } else {
+            // no account
+            if (empty($result)) {
+                showNotification("Invalid email/password combination.");
+            } else {
+                $possiblePassword = $result['password'];
+                // account locked
+                if ($result['attemptCount'] == 5) {
+                    showNotification("Account has been locked on too many attempts.");
+                } else if (password_verify($passwordInput,  $possiblePassword)) {
+                    // if deactivated
+                    if ($result['isActive'] == 0) {
+                        showNotification("Account has been deactivated by admin.");
+                    } else {
+                        //   get user info and redirect
+                        $stmt = $connection->prepare("SELECT id,full_name FROM users WHERE email=?");
+                        $stmt->bind_param('s', $emailInput);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        $result = $result->fetch_array(MYSQLI_ASSOC);
 
-            // increase attempt count
-            $newAttemptCount = $result['attemptCount'] + 1;
-            $remainingAttempts = 5 - $newAttemptCount;
-            $stmt = $connection->prepare("UPDATE users SET attemptCount=? WHERE email=?");
-            $stmt->bind_param('is', $newAttemptCount, $emailInput);
-            $stmt->execute();
-            showNotification("Invalid email/password combination. " . $remainingAttempts . " tries remaining!");
+                        $_SESSION['uid'] = $result['id'];
+                        $_SESSION['name'] = $result['full_name'];
+
+
+                        // reset attempt count
+                        $stmt = $connection->prepare("UPDATE users SET attemptCount=0 WHERE email=?");
+                        $stmt->bind_param('s', $emailInput);
+                        $stmt->execute();
+
+                        header("location:../../dashboard/home.php");
+                    }
+                } else if ($result['password']) {
+
+                    // increase attempt count
+                    $newAttemptCount = $result['attemptCount'] + 1;
+                    $remainingAttempts = 5 - $newAttemptCount;
+                    $stmt = $connection->prepare("UPDATE users SET attemptCount=? WHERE email=?");
+                    $stmt->bind_param('is', $newAttemptCount, $emailInput);
+                    $stmt->execute();
+                    showNotification("Invalid email/password combination. " . $remainingAttempts . " tries remaining!");
+                }
+            }
         }
+    }
+
+    //catch exception
+    catch (Exception $e) {
+        showNotification("Something went wrong");
     }
 }
 
 // on post
 if ($_POST) {
-    loginUser($connection);
+    try {
+        $secret = "6LdM_jMgAAAAAHomg-xBvg2IXJMljM-mJMEPAtU8";
+        $response = $_POST['g-recaptcha-response'];
+        $remoteip = $_SERVER['REMOTE_ADDR'];
+        $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response&remoteip=$remoteip";
+        $data = file_get_contents($url);
+        $row = json_decode($data, true);
+        if ($row['success'] == "true") {
+
+            loginUser($connection);
+        } else {
+            // header("Refresh:0");
+            showNotification("Captcha Failed");
+        }
+    } catch (Exception $e) {
+        showNotification("Something Went Wrong");
+    }
 }
 ?>
 
@@ -110,6 +146,7 @@ if ($_POST) {
 
             <!-- Form Inputs-->
             <div>
+                <input type="text" name="session" value="123456gotem" hidden>
                 <!-- Email -->
                 <div class="input_container">
                     <label for="email">Email : </label>
@@ -120,6 +157,11 @@ if ($_POST) {
                 <div class="input_container">
                     <label for="password">Password : </label>
                     <input type="text" name="password" required>
+                </div>
+
+                <!-- Captcha -->
+                <div class="captcha_container">
+                    <div class="g-recaptcha" data-sitekey="6LdM_jMgAAAAAC7VXyp8sdSNulMdZa8s68zNDsWE"></div>
                 </div>
 
 
@@ -148,5 +190,9 @@ if ($_POST) {
         </div>
     </section>
 </body>
+
+
+<!-- Google Captcha v2 -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 </html>
