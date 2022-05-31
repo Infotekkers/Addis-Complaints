@@ -1,0 +1,159 @@
+@import url("../../style.css");
+
+.dash_main_container {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(to bottom, #5e166187, #862f848b),
+    url("../../assets/img/addis-ababa-3.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 80px;
+}
+
+.dash_main_left_container {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 0 6%;
+}
+.dash_main_left_container > h1 {
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 10px;
+  font-family: var(--primary-font);
+  font-weight: bold;
+  letter-spacing: 0.55px;
+  font-size: 48px;
+}
+.dash_main_left_container > h1:nth-of-type(2) {
+  width: 80%;
+  text-align: center;
+  font-size: 48px;
+}
+.dash_main_left_container > p {
+  margin-top: 12px;
+  font-size: 14px;
+  font-family: var(--secondary-font);
+  line-height: 1.5;
+  letter-spacing: 0.1px;
+}
+.dash_main_right_container {
+  width: 45%;
+  height: 100%;
+  /* background-color: rgba(0, 0, 0, 0.05); */
+  overflow-y: scroll;
+}
+
+.add-feedback-button-container {
+  background-color: rgba(255, 255, 0, 0.65);
+  margin-left: auto;
+  margin-right: auto;
+  width: 230px;
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 5px 18px;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+}
+.add-feedback-button-container > img {
+  width: 30px;
+  height: 30px;
+}
+
+.add-feedback-button {
+  background: none;
+  border: none;
+  letter-spacing: 0.25;
+  width: 200px;
+  height: 35px;
+  font-weight: 600;
+  font-size: 18;
+}
+.feedback_card {
+  height: 220px;
+  width: 85%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 36px;
+  background-color: rgba(0, 0, 0, 0.365);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.65);
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 20px;
+  border-radius: 12px;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -ms-border-radius: 12px;
+  -o-border-radius: 12px;
+}
+.feedback_card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.65);
+}
+
+.feedback_card:nth-of-type(1) {
+  margin-top: 24px;
+}
+.feedback_card_pdf_indicator {
+  width: 80px;
+  height: 80px;
+  background-color: red;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+
+.feedback_card_body_container {
+  width: calc(100% - 80px - 25px);
+
+  /* text-align: justify; */
+}
+
+.feedback_card_title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-family: var(--primary-font);
+  letter-spacing: 0.5px;
+}
+.feedback_card_body {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  height: 130px;
+  font-size: 14px;
+  line-height: 1.5;
+  font-family: var(--secondary-font);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #5e166187;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
