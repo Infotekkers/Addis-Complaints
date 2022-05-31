@@ -7,61 +7,67 @@ session_start();
 $show_notification_message = false;
 $notification_message_content = "";
 
-function showNotification($notificationMessage){
+function showNotification($notificationMessage)
+{
     $show_notification_message = true;
     $notification_message_content = $notificationMessage;
     include '../../inc/notification.php';
 }
 
-function loginUser($connection) {
-    $emailInput = filter_var($_POST['email'],FILTER_SANITIZE_EMAIL);
-    $passwordInput = filter_var($_POST['password'],FILTER_SANITIZE_EMAIL);
-      
+function loginUser($connection)
+{
+    $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $passwordInput = filter_var($_POST['password'], FILTER_SANITIZE_EMAIL);
+
     $stmt = $connection->prepare("SELECT password,isActive,attemptCount FROM users WHERE email=?");
-    $stmt->bind_param('s',$emailInput);
+    $stmt->bind_param('s', $emailInput);
     $stmt->execute();
     $result = $stmt->get_result();
     $result = $result->fetch_array(MYSQLI_ASSOC);
 
-    $possiblePassword = $result['password'];
 
 
-    // account locked
-    if($result['attemptCount'] == 5){
-        showNotification("Account has been locked on too many attempts.");
-    }
-    else if (password_verify($passwordInput ,  $possiblePassword)) {
-        // if deactivated
-        if($result['isActive'] == 0){
-            showNotification("Account has been deactivated by admin.");
-        }else{
-            //   get user info and redirect'
-            $stmt = $connection->prepare("SELECT id,full_name FROM users WHERE email=?");
-            $stmt->bind_param('s',$emailInput);
+    // no account
+    if (empty($result)) {
+        showNotification("Invalid email/password combination.");
+    } else {
+        $possiblePassword = $result['password'];
+        // account locked
+        if ($result['attemptCount'] == 5) {
+            showNotification("Account has been locked on too many attempts.");
+        } else if (password_verify($passwordInput,  $possiblePassword)) {
+            // if deactivated
+            if ($result['isActive'] == 0) {
+                showNotification("Account has been deactivated by admin.");
+            } else {
+                //   get user info and redirect'
+                $stmt = $connection->prepare("SELECT id,full_name FROM users WHERE email=?");
+                $stmt->bind_param('s', $emailInput);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $result = $result->fetch_array(MYSQLI_ASSOC);
+
+                $_SESSION['uid'] = $result['id'];
+                $_SESSION['name'] = $result['full_name'];
+
+
+                // reset attempt count
+                $stmt = $connection->prepare("UPDATE users SET attemptCount=0 WHERE email=?");
+                $stmt->bind_param('s', $emailInput);
+                $stmt->execute();
+
+                header("location:../../dashboard/home.php");
+            }
+        } else if ($result['password']) {
+
+            // increase attempt count
+            $newAttemptCount = $result['attemptCount'] + 1;
+            $remainingAttempts = 5 - $newAttemptCount;
+            $stmt = $connection->prepare("UPDATE users SET attemptCount=? WHERE email=?");
+            $stmt->bind_param('is', $newAttemptCount, $emailInput);
             $stmt->execute();
-            $result = $stmt->get_result();
-            $result = $result->fetch_array(MYSQLI_ASSOC);
-
-            $_SESSION['uid'] = $result['id'];
-            $_SESSION['name'] = $result['full_name'];
-            
-
-            // reset attempt count
-            $stmt = $connection->prepare("UPDATE users SET attemptCount=0 WHERE email=?");
-            $stmt->bind_param('s',$emailInput);
-            $stmt->execute();
-
-            header("location:../../dashboard/home.php");
+            showNotification("Invalid email/password combination. " . $remainingAttempts . " tries remaining!");
         }
-    } else if($result['password']) {
-        
-        // increase attempt count
-        $newAttemptCount = $result['attemptCount'] + 1;
-        $remainingAttempts = 5 - $newAttemptCount;
-        $stmt = $connection->prepare("UPDATE users SET attemptCount=? WHERE email=?");
-        $stmt->bind_param('is',$newAttemptCount,$emailInput);
-        $stmt->execute();
-        showNotification("Invalid email/password combination. ". $remainingAttempts . " tries remaining!");
     }
 }
 
