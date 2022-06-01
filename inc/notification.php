@@ -1,4 +1,4 @@
-<div id="global_notification_container"><?php echo $notification_message_content?></div>
+<div id="global_notification_container"><?php echo $notification_message_content ?></div>
 
 <style>
 @import url("../style.css");
@@ -13,6 +13,7 @@
     display: flex;
     align-items: center;
     padding: 0 5px;
+    z-index: 100;
 
 }
 </style>

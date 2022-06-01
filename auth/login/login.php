@@ -1,5 +1,9 @@
 <?php
 
+if (!isset($_SESSION['uid'])) {
+    header("location:../auth/login/login.php");
+}
+
 include "../../config/db.php";
 
 session_start();
