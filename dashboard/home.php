@@ -10,8 +10,9 @@ if (!isset($_SESSION['uid'])) {
 
 
 
+
 $userId = $_SESSION['uid'];
-$stmt = $connection->prepare("SELECT feedback_id,user_id,title,comment,date,status FROM feedbacks WHERE user_id=?");
+$stmt = $connection->prepare("SELECT feedbacks.feedback_id,feedbacks.title, feedbacks.comment, feedbacks.date, feedbacks.status,feedbacks.user_id,users.full_name,users.email  FROM feedbacks INNER JOIN users ON feedbacks.user_id=users.id  WHERE user_id =?");
 $stmt->bind_param('s', $userId);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -19,16 +20,6 @@ $result = $result->fetch_all(MYSQLI_ASSOC);
 
 if (!empty($result)) {
     $userIdd =  $result[0]['user_id'];
-
-    // $stmtt = $connection->prepare("SELECT fullName,email FROM users WHERE id=?");
-    // echo $stmtt;
-    // if ($stmtt != false) {
-
-    //     $stmtt->bind_param('s', $userIdd);
-    //     $stmtt->execute();
-    //     $user = $stmtt->get_result();
-    //     $user = $result->fetch_array(MYSQLI_ASSOC);
-    // }
 }
 
 
@@ -71,19 +62,13 @@ if (!empty($result)) {
             </p>
 
             <!-- Add Button -->
-            <form action="../feedback/feedback_modal.php" method="POST" class="add-feedback-button-container"
+            <form action="../feedback/feedback_modal_add.php" method="POST" class="add-feedback-button-container"
                 id="open-modal">
 
-                <input type="text" name="fullName" value="" hidden>
+                <input type="text" name="full_name" value="" hidden>
                 <input type="text" name="email" value="" hidden>
                 <input type="text" name="title" value="" hidden>
                 <input type="text" name="comment" value="" hidden>
-                <input type="text" name="commentId" value="" hidden>
-                <input type="text" name="isAdd" value="1" hidden>
-                <input type="text" name="isEdit" value="0" hidden>
-                <input type="text" name="isSubmit" value="0" hidden>
-
-
                 <img src="../assets/img/add-button-svgrepo-com.svg" alt="">
                 <input type="submit" value="Add New Feedback" class="add-feedback-button">
             </form>
@@ -112,12 +97,8 @@ if (!empty($result)) {
                         </div>
 
                         <!-- delete -->
-                        <form action="../feedback/feedback_modal.php" method="POST">
-                            <input type="text" name="isEdit" value="1" hidden>
-                            <input type="text" name="isSubmit" value="0" hidden>
-                            <input type="text" name="isAdd" value="0" hidden>
-                            <input type="text" name="fullName" value="" hidden>
-                            <input type="text" name="email" value="" hidden>
+                        <form action="../feedback/feedback_modal_edit.php" method="GET">
+
                             <input type="text" name="title"
                                 value="<?php echo filter_var($complaint['title'], FILTER_SANITIZE_SPECIAL_CHARS) ?>"
                                 hidden>
@@ -128,19 +109,13 @@ if (!empty($result)) {
                                 value="<?php echo filter_var($complaint['feedback_id'], FILTER_SANITIZE_SPECIAL_CHARS) ?>"
                                 hidden>
 
-
-                            <!-- <div class="delete-control" id="delete-control">
-
-                                <img src="../assets/icons/delete.svg" alt="">
-                            </div> -->
-
-                            <!-- feedback id -->
-                            <input type="postId"
-                                value="<?php echo filter_var($complaint['feedback_id'], FILTER_SANITIZE_SPECIAL_CHARS) ?>"
+                            <input type="text" name="full_name"
+                                value="<?php echo filter_var($complaint['full_name'], FILTER_SANITIZE_SPECIAL_CHARS) ?>"
                                 hidden>
-                            <input type="function" value="delete">
+                            <input type="text" name="email"
+                                value="<?php echo filter_var($complaint['email'], FILTER_SANITIZE_EMAIL) ?>" hidden>
 
-                            <input type="submit" value="delete">
+                            <input type="submit" value="Edit">
                         </form>
                     </div>
 
@@ -150,7 +125,9 @@ if (!empty($result)) {
 
                     <!-- body -->
                     <div class="feedback_card_body">
-                        <?php echo  filter_var($complaint['comment'], FILTER_SANITIZE_SPECIAL_CHARS) ?></div>
+                        <?php echo  filter_var($complaint['comment'], FILTER_SANITIZE_SPECIAL_CHARS) ?>
+
+                    </div>
 
                     <!-- more info -->
                     <div class="feedback_card_date">

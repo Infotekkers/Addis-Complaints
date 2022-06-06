@@ -21,7 +21,7 @@ function showNotification($notificationMessage)
 }
 
 
-function addNewComment($connection, $isEditMode, $commentId)
+function editComment($connection, $commentId)
 {
     $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
     $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
@@ -58,63 +58,31 @@ function addNewComment($connection, $isEditMode, $commentId)
     else {
         $uid  = $_SESSION['uid'];
 
-        // if edit mode
-        if ($isEditMode == '1') {
+
+        try {
             $editStmt = $connection->prepare("UPDATE feedbacks SET title=?,comment=? WHERE feedback_id=?");
             $editStmt->bind_param('ssi',  $titleInput, $commentInput, $commentId);
             $editStmt->execute();
-
-            echo "Edited";
+            $result = $editStmt->get_result();
+        } catch (Exception $e) {
+            showNotification("Something went wrong");
         }
 
-        // if add mode
-        else {
-            $date = date_create()->format('Y-m-d H:i:s');
-            $stmt = $connection->prepare("INSERT INTO feedbacks (feedback_id, user_id, title,comment,date,status) VALUES ('', ?, ?, ?, ? , '')");
-            $stmt->bind_param('isss', $uid, $titleInput, $commentInput, $date,);
-            $stmt->execute();
-
-            echo $commentInput;
-        }
 
         // redirect to home
         header("location:../dashboard/home.php");
     }
 }
 
-if ($_POST) {
-    $isEdit =
-        filter_var($_POST['isEdit'], FILTER_SANITIZE_SPECIAL_CHARS);
+if ($_GET) {
 
-    $isAdd =
-        filter_var($_POST['isAdd'], FILTER_SANITIZE_SPECIAL_CHARS);
-
-    $isSubmit =
-        filter_var($_POST['isSubmit'], FILTER_SANITIZE_SPECIAL_CHARS);
-
-    $fullName = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
-    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    $title = filter_var($_POST['title'], FILTER_SANITIZE_SPECIAL_CHARS);
-    $comment = filter_var($_POST['comment'], FILTER_SANITIZE_SPECIAL_CHARS);
-    $commentId = filter_var($_POST['commentId'], FILTER_SANITIZE_SPECIAL_CHARS);
-
-    // if add mode
-    if ($isAdd == "1") {
-        // addNewComment($connection, $isEdit, $commentId);
-        echo $isAdd;
-    }
-    // if edit mode but no submit
-    else if ($isEdit == "1" && $isSubmit == "0") {
-        $fullNameEdit = $fullName;
-        $emailEdit = $email;
-        $titleEdit = $title;
-        $commentEdit = $comment;
-    }
-    // if submit
-    else if ($isSubmit == "1") {
-
-        addNewComment($connection, $isEdit, $commentId);
-    }
+    $fullName = filter_var($_GET['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
+    $email = filter_var($_GET['email'], FILTER_SANITIZE_EMAIL);
+    $title = filter_var($_GET['title'], FILTER_SANITIZE_SPECIAL_CHARS);
+    $comment = filter_var($_GET['comment'], FILTER_SANITIZE_SPECIAL_CHARS);
+    $commentId = filter_var($_GET['commentId'], FILTER_SANITIZE_SPECIAL_CHARS);
+} else if ($_POST) {
+    editComment($connection, $_POST['commentId']);
 }
 
 
@@ -124,7 +92,7 @@ if ($_POST) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Complaint</title>
+    <title>Edit Complaint</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -138,7 +106,7 @@ if ($_POST) {
     <section class="feedback_modal" id="feedback-modal">
 
 
-        <form class="feedback_modal_form_container" action="./feedback_modal.php" method="POST">
+        <form class="feedback_modal_form_container" action="./feedback_modal_edit.php" method="POST">
 
             <div class="feedback_modal_file_upload_container">
                 File Upload
@@ -146,34 +114,30 @@ if ($_POST) {
 
             <div class="feedback_modal_form">
 
-                <input type="text" name="isSubmit" value="1" hidden>
-                <input type="text" name="isAdd" value="0" hidden>
-                <input type="text" name="isEdit" value="<?php echo (isset($isEdit)) ? $isEdit : '0'; ?>" hidden>
                 <input type="text" name="commentId" value="<?php echo (isset($commentId)) ? $commentId : ''; ?>" hidden>
-
                 <!-- Name -->
                 <div class="feedback_form_input_container">
                     <label for="fullName" class="feedback_form_label">Full Name</label>
-                    <input type="text" name="full_name" value="<?php echo (isset($fullNameEdit)) ? $fullName : ''; ?>">
+                    <input type="text" name="full_name" value="<?php echo (isset($fullName)) ? $fullName : ''; ?>">
                 </div>
 
                 <!-- Email -->
                 <div class="feedback_form_input_container">
                     <label for="email" class="feedback_form_label">Email</label>
-                    <input type="text" name="email" value="<?php echo (isset($emailEdit)) ? $email : ''; ?>">
+                    <input type="text" name="email" value="<?php echo (isset($email)) ? $email : ''; ?>">
                 </div>
 
                 <!-- Email -->
                 <div class="feedback_form_input_container">
                     <label for="email" class="feedback_form_label">Title</label>
-                    <input type="text" name="title" value="<?php echo (isset($titleEdit)) ? $title : ''; ?>">
+                    <input type="text" name="title" value="<?php echo (isset($title)) ? $title : ''; ?>">
                 </div>
 
                 <!-- Text Area -->
                 <div class="feedback_form_input_container">
                     <label for="comment" class="feedback_form_label">Comment</label>
                     <textarea name="comment" cols="30"
-                        rows="12"><?php echo (isset($commentEdit)) ? $comment : ''; ?></textarea>
+                        rows="12"><?php echo (isset($comment)) ? $comment : ''; ?></textarea>
                 </div>
 
                 <!-- submit -->

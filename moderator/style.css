@@ -1,0 +1,201 @@
+@import url("../../style.css");
+
+.admin_dash_container {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(to bottom, #5e166187, #862f848b),
+    url("../../assets/img/addis-ababa-4.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 12px;
+  padding-top: 80px;
+}
+
+.admin_dash_userlist_container {
+  width: 45%;
+  height: 100%;
+  overflow-y: scroll;
+  padding: 0 18px;
+  padding-bottom: 28px;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.user_card {
+  margin-top: 28px;
+  width: 100%;
+  padding: 5px 18px;
+  height: 55px;
+  background-color: rgba(0, 0, 0, 0.365);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.65);
+  color: rgba(255, 255, 255, 0.85);
+  transition: 0.3s;
+  display: flex;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 12px;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -ms-border-radius: 12px;
+  -o-border-radius: 12px;
+}
+
+.user_card_info {
+  width: 65%;
+  height: 100%;
+  display: flex;
+}
+
+.user_card_text_info > p:nth-of-type(1) {
+  font-size: 18px;
+  font-family: var(--secondary-font);
+  line-height: 1.5;
+  letter-spacing: 0.1px;
+  font-weight: bold;
+  text-overflow: ellipsis;
+}
+
+.user_card_text_info > p:nth-of-type(2) {
+  font-size: 13px;
+  font-family: var(--primary-font);
+  letter-spacing: 0.1px;
+  text-overflow: ellipsis;
+}
+
+.user_card_text_info {
+  width: 75%;
+  height: 100%;
+}
+
+.user_card_account_info {
+  width: 20%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.user_card_controls {
+  width: 30%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 100%;
+}
+
+.admin_dash_feedback_container {
+  width: 52%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /*justify-content: center; */
+  color: rgba(255, 255, 255, 0.85);
+  overflow-y: scroll;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.feedback_card {
+  height: 260px;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 36px;
+  background-color: rgba(0, 0, 0, 0.365);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.65);
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 25px 20px;
+  border-radius: 12px;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -ms-border-radius: 12px;
+  -o-border-radius: 12px;
+}
+.feedback_card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.65);
+}
+
+.feedback_card:nth-of-type(1) {
+  margin-top: 24px;
+}
+.feedback_card_status_indicator {
+  width: 70px;
+  height: 70px;
+  background-color: red;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+
+.feedback_card_body_container {
+  width: calc(100% - 70px - 25px);
+}
+
+.feedback_card_controls_container {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.feedback_card_controls_container img {
+  width: 20px;
+  height: 20px;
+}
+.edit-control {
+  margin-right: 12px;
+
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+}
+
+.feedback_card_title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-family: var(--primary-font);
+  letter-spacing: 0.5px;
+  margin-top: 24px;
+}
+.feedback_card_body {
+  overflow-y: scroll;
+  height: 100px;
+  font-size: 13px;
+  line-height: 1.5;
+  font-family: var(--secondary-font);
+}
+
+.feedback_card_date {
+  font-size: 14px;
+  font-style: italic;
+  letter-spacing: 0.15;
+  text-align: end;
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #5e166187;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
