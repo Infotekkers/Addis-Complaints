@@ -12,11 +12,13 @@ CREATE TABLE admin (
     full_name varchar(36) NOT NULL,
     email varchar(64) NOT NULL,
     password varchar(255) NOT NULL
+    attemptCount int NOT NULL DEFAULT 0
 );
 
 CREATE TABLE feedbacks (
 feedback_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 title VARCHAR(120) NOT NULL,
+filePath VARCHAR(120) NOT NULL,
 comment VARCHAR(320) NOT NULL,
 date DATE DEFAULT (CURRENT_DATE),
 status VARCHAR(50),

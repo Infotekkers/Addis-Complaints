@@ -11,7 +11,7 @@ if (!isset($_SESSION['uid'])) {
 $userId = $_SESSION['uid'];
 
 
-$userStmt = $connection->prepare("SELECT full_name,email,isActive,attemptCount from users");
+$userStmt = $connection->prepare("SELECT id,full_name,email,isActive,attemptCount from users");
 $userStmt->execute();
 $userResult = $userStmt->get_result();
 $userResult = $userResult->fetch_all(MYSQLI_ASSOC);
@@ -47,6 +47,9 @@ $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
 
             <?php
             if (empty($userResult)) { ?>
+            <div class="no-data-center-container">
+                <h1 class="no-data-text-header">No Users Yet.</h1>
+            </div>
 
             <?php } else {
                 foreach ($userResult as $user) { ?>
@@ -58,6 +61,8 @@ $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
                         <p><?php echo $user['full_name'] ?></p>
 
                         <p><?php echo $user['email'] ?></p>
+
+
                     </div>
 
                     <!-- Account Status -->
@@ -68,9 +73,20 @@ $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
                 </div>
 
                 <div class="user_card_controls">
-                    <div>Activate</div>
-                    <div>Deactivate</div>
-                    <div>Reset</div>
+                    <form action="./reset_user.php" method="POST">
+                        <input type="text" name="userId" value="<?php echo $user['id'] ?>" hidden>
+                        <input type="number" value="1" name="status" hidden>
+                        <input type="submit" value="Activate">
+                    </form>
+                    <form action="./reset_user.php" method="POST">
+                        <input type="text" name="userId" value="<?php echo $user['id'] ?>" hidden>
+                        <input type="number" value="0" name="status" hidden>
+                        <input type="submit" value="Deactivate">
+                    </form>
+                    <form action="./reset_user.php" method="POST">
+                        <input type="text" name="userId" value="<?php echo $user['id'] ?>" hidden>
+                        <input type="submit" value="Reset">
+                    </form>
                 </div>
             </div>
 
@@ -89,6 +105,10 @@ $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
             <?php
             if (empty($feedbackResult)) {
             ?>
+
+            <div class="no-data-center-container">
+                <h1 class="no-data-text-header">No Feedbacks Yet.</h1>
+            </div>
             <?php } else {
 
                 foreach ($feedbackResult as $feedback) {  ?>
