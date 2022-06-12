@@ -105,7 +105,6 @@ if ($_POST) {
 
             loginUser($connection);
         } else {
-            // header("Refresh:0");
             showNotification("Captcha Failed");
         }
     } catch (Exception $e) {

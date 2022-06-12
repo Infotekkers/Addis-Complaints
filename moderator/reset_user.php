@@ -34,7 +34,7 @@ function activateUser($connection)
         header("location:./moderator_home.php");
         // echo $status;
     } catch (Exception $e) {
-        echo ("Something Went Wrong");
+        showNotification("Something Went Wrong");
     }
 }
 
