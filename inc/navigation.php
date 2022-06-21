@@ -1,3 +1,3 @@
 <nav>
-    <a href="/auth/logout/logout.php">Logout</a>
+    <a href="../auth/logout/logout.php">Logout</a>
 </nav>

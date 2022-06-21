@@ -1,9 +1,10 @@
 <?php
-
-
 include "../../config/db.php";
-
 session_start();
+
+if (isset($_SESSION['uid'])) {
+    header("location:../../dashboard/home.php");
+}
 
 $show_notification_message = false;
 $notification_message_content = "";
