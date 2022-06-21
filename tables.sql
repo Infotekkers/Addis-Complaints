@@ -11,7 +11,7 @@ CREATE TABLE admin (
     id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
     full_name varchar(36) NOT NULL,
     email varchar(64) NOT NULL,
-    password varchar(255) NOT NULL
+    password varchar(255) NOT NULL,
     attemptCount int NOT NULL DEFAULT 0
 );
 
