@@ -1,7 +1,7 @@
 <?php
 
-if (!isset($_SESSION['uid'])) {
-    header("location:../auth/login/login.php");
+if (isset($_SESSION['uid'])) {
+    header("location:../../dashboard/home.php");
 }
 
 include "../../config/db.php";
