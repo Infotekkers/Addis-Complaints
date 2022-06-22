@@ -52,7 +52,7 @@ body {
   color: rgba(255, 255, 255, 0.85);
 }
 
-input[type="text"] {
+input[type="text"] select{
   height: 28px;
   outline: none;
   padding: 12px;

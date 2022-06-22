@@ -10,9 +10,6 @@ if (!isset($_SESSION['uid'])) {
 $show_notification_message = false;
 $notification_message_content = "";
 
-
-
-
 function showNotification($notificationMessage)
 {
     $show_notification_message = true;
@@ -23,6 +20,7 @@ function showNotification($notificationMessage)
 
 function addNewComment($connection)
 {
+
     $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
     $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
 
@@ -39,12 +37,12 @@ function addNewComment($connection)
     if (!preg_match($fullNamePattern, $fullNameInput) || strlen($fullNameInput) > 24) {
         showNotification("Invalid Name");
     }
-
+    
     // check email
     if (!preg_match($emailPattern, $emailInput)) {
         showNotification("Invalid Email");
     }
-
+    
     // check title
     // if (!preg_match($titlePattern, $titleInput)) {
     //     showNotification("Invalid title");
@@ -54,7 +52,7 @@ function addNewComment($connection)
     // if (!preg_match($commentPattern, $commentInput)) {
     //     showNotification("Invalid comment");
     // } 
-
+            
     else {
         $uid  = $_SESSION['uid'];
 
@@ -114,25 +112,34 @@ if ($_POST) {
                 <!-- Name -->
                 <div class="feedback_form_input_container">
                     <label for="fullName" class="feedback_form_label">Full Name</label>
-                    <input type="text" name="full_name">
+                    <input type="text" name="full_name" required>
                 </div>
 
                 <!-- Email -->
                 <div class="feedback_form_input_container">
                     <label for="email" class="feedback_form_label">Email</label>
-                    <input type="text" name="email">
+                    <input type="text" name="email" required>
                 </div>
 
-                <!-- Email -->
+                <!-- Title -->
                 <div class="feedback_form_input_container">
                     <label for="email" class="feedback_form_label">Title</label>
-                    <input type="text" name="title">
+                    <select name="title" required>
+                        <option disabled selected></option>
+                        <option value="Corruption">Corruption</option>
+                        <option value="Parking Issues">Parking Issues</option>
+                        <option value="Potholes">Potholes</option>
+                        <option value="Public Property Abuse">Public Property Abuse</option>
+                        <option value="Transport Issues">Transport Issues</option>
+                    </select>
                 </div>
 
                 <!-- Text Area -->
                 <div class="feedback_form_input_container">
                     <label for="comment" class="feedback_form_label">Comment</label>
-                    <textarea name="comment" cols="30" rows="12"></textarea>
+                    <!-- <span id="word-count">0/100</span> -->
+                    <span>(500 characters minimum)</span>
+                    <textarea name="comment" cols="30" rows="12" minlength="500" required></textarea>
                 </div>
 
                 <!-- submit -->
