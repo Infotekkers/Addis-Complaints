@@ -29,6 +29,7 @@ function addNewComment($connection)
         showNotification("Malicious Attempt!");
         session_destroy();
         header("location:../auth/login/login.php");
+        exit;
     } else {
         $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
         $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";

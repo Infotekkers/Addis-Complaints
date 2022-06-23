@@ -57,6 +57,7 @@ function loginUser($connection)
 
 
                     header("location:../../moderator/moderator_home.php");
+                    exit;
                 } else if ($result['password']) {
 
                     // increase attempt count
@@ -90,7 +91,6 @@ if ($_POST) {
 
             loginUser($connection);
         } else {
-            // header("Refresh:0");
             showNotification("Captcha Failed");
         }
     } catch (Exception $e) {

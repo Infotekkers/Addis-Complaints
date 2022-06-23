@@ -8,6 +8,7 @@ $_SESSION['antiCSRFToken'] = bin2hex(random_bytes(35));
 
 if (!isset($_SESSION['uid'])) {
     header("location:../auth/login/login.php");
+    exit;
 }
 
 

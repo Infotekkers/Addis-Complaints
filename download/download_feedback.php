@@ -6,6 +6,7 @@ session_regenerate_id();
 
 if (!isset($_SESSION['uid'])) {
     header("location:../auth/login/login.php");
+    exit;
 }
 
 $show_notification_message = false;
@@ -31,14 +32,23 @@ function downloadFile($connection)
             $result = $result->fetch_all(MYSQLI_ASSOC)[0];
 
             if ($result['user_id'] == $_SESSION['uid'] && $result['filePath'] == $_SESSION['filePath']) {
-                $file = "../uploads/" . $_SESSION['filePath'];
-                header('Content-Type: application/octet-stream');
-                header("Content-Transfer-Encoding: Binary");
-                header("Content-disposition: attachment; filename=\"" . basename($file) . "\"");
-                ob_clean();
-                flush();
-                readfile($file);
-                exit;
+                // if sus name
+                if (str_contains($_SESSION['filePath'], "..", "../", "./", ".//", "..//",)) {
+                    showNotification("Malicious Attempt!");
+                    session_destroy();
+                    header("location:../auth/login/login.php");
+                    exit;
+                } else {
+
+                    $file = "../uploads/" . $_SESSION['filePath'];
+                    header('Content-Type: application/octet-stream');
+                    header("Content-Transfer-Encoding: Binary");
+                    header("Content-disposition: attachment; filename=\"" . basename($file) . "\"");
+                    ob_clean();
+                    flush();
+                    readfile($file);
+                    exit;
+                }
             } else {
                 showNotification("Something Went Wrong");
             }

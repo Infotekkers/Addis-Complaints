@@ -5,6 +5,7 @@ session_regenerate_id();
 
 if (isset($_SESSION['uid'])) {
     header("location:../../dashboard/home.php");
+    exit;
 }
 
 $show_notification_message = false;
@@ -76,6 +77,7 @@ function loginUser($connection)
                         $stmt->execute();
 
                         header("location:../../dashboard/home.php");
+                        exit;
                     }
                 } else if ($result['password']) {
 

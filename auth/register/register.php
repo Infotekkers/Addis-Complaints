@@ -34,17 +34,17 @@ function registerUser($connection)
         }
 
         // check email
-        if (!preg_match($emailPattern, $emailInput)) {
+        elseif (!preg_match($emailPattern, $emailInput)) {
             showNotification("Invalid Email");
         }
 
         // check password
-        if (!preg_match($passwordPattern, $passwordInput) || strlen($passwordInput) > 24) {
+        elseif (!preg_match($passwordPattern, $passwordInput) || strlen($passwordInput) > 24) {
             showNotification("Invalid Password");
         }
 
         // check password match
-        if ($confirmPasswordInput != $passwordInput) {
+        elseif ($confirmPasswordInput != $passwordInput) {
             showNotification("Passwords do not match");
         } else if (preg_match($fullNamePattern, $fullNameInput)) {
 
@@ -69,6 +69,7 @@ function registerUser($connection)
                 $result = $stmt->get_result();
 
                 header("location:../login/login.php");
+                exit;
             }
         }
     } catch (Exception $e) {
@@ -89,7 +90,7 @@ if ($_POST) {
         if ($row['success'] == "true") {
             registerUser($connection);
         } else {
-            // header("Refresh:0");
+
             showNotification("Captcha Failed");
         }
     } catch (Exception $e) {
@@ -151,7 +152,7 @@ if ($_POST) {
                 <!-- Confirm Password -->
                 <div class="input_container">
                     <label for="confirm-password">Confirm Password : </label>
-                    <input type="text" name="confirmPassword" required>
+                    <input type="password" name="confirmPassword" required>
                 </div>
 
                 <!-- Captcha -->
