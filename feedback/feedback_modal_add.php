@@ -48,7 +48,7 @@ function addNewComment($connection)
         }
 
         // check email
-        if (!preg_match($emailPattern, $emailInput)) {
+        elseif (!preg_match($emailPattern, $emailInput)) {
             showNotification("Invalid Email");
         }
 
