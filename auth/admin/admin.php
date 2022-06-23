@@ -100,22 +100,22 @@ function loginUser($connection)
 
 // on post
 if ($_POST) {
-    // try {
-    //     $secret = "6LdM_jMgAAAAAHomg-xBvg2IXJMljM-mJMEPAtU8";
-    //     $response = $_POST['g-recaptcha-response'];
-    //     $remoteip = $_SERVER['REMOTE_ADDR'];
-    //     $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response&remoteip=$remoteip";
-    //     $data = file_get_contents($url);
-    //     $row = json_decode($data, true);
-    //     if ($row['success'] == "true") {
+    try {
+        $secret = "6LdM_jMgAAAAAHomg-xBvg2IXJMljM-mJMEPAtU8";
+        $response = $_POST['g-recaptcha-response'];
+        $remoteip = $_SERVER['REMOTE_ADDR'];
+        $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response&remoteip=$remoteip";
+        $data = file_get_contents($url);
+        $row = json_decode($data, true);
+        if ($row['success'] == "true") {
 
-    loginUser($connection);
-    //     } else {
-    //         showNotification("Captcha Failed");
-    //     }
-    // } catch (Exception $e) {
-    //     showNotification("Something Went Wrong");
-    // }
+            loginUser($connection);
+        } else {
+            showNotification("Captcha Failed");
+        }
+    } catch (Exception $e) {
+        showNotification("Something Went Wrong");
+    }
 }
 ?>
 

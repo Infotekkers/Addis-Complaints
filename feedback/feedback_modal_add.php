@@ -55,16 +55,16 @@ function addNewComment($connection)
 
     // check title
     // if (!preg_match($titlePattern, $titleInput)) {
-    //     showNotification("Invalid title");
+    // showNotification("Invalid title");
     // }
 
     // check comment
     // if (!preg_match($commentPattern, $commentInput)) {
-    //     showNotification("Invalid comment");
-    // } 
+    // showNotification("Invalid comment");
+    // }
 
     else {
-        $uid  = $_SESSION['uid'];
+        $uid = $_SESSION['uid'];
 
 
         try {
@@ -91,39 +91,56 @@ function addNewComment($connection)
             }
             // if file selected
             else {
-                // if file is valid
+                // if file has proper extension
                 if (in_array($fileExtensionLwr, $allowedFileExtensions)) {
+                    // check file content
+                    $fileContent = file_get_contents($fileTempLocation);
+
+                    // check pdf met data
+                    if (preg_match("/^%PDF-1.1/", $fileContent) == false && preg_match("/^%PDF-1.2/", $fileContent) == false && preg_match("/^%PDF-1.3/", $fileContent) == false && preg_match("/^%PDF-1.4/", $fileContent) == false && preg_match("/^%PDF-1.5/", $fileContent) == false && preg_match("/^%PDF-1.6/", $fileContent) == false && preg_match("/^%PDF-1.7/", $fileContent) == false) {
+                        showNotification("Invalid File format.");
+                    }
+                    // check php tags
+                    else if (str_contains($fileContent, "<?php") || str_contains($fileContent, "<?=") || str_contains($fileContent, "<?")) {
+                        session_destroy();
+                        header("location:../auth/login/login.php");
+                    }
                     // check file error
-                    if ($fileError === 0) {
+                    else if ($fileError === 0) {
                         // check file size
                         if ($fileSize < 25000000) {
                             $newFileName = uniqid("", true) . "." . $fileExtensionLwr;
-                            $fileUploadRoot = "../uploads/" . $newFileName;
-
+                            $fileUploadRoot = "../uploads/" .
+                                $newFileName;
                             move_uploaded_file($fileTempLocation, $fileUploadRoot);
-
                             // save to db
                             $date = date_create()->format('Y-m-d H:i:s');
                             $stmt = $connection->prepare("INSERT INTO feedbacks (feedback_id, user_id, title,comment,date,status,filePath) VALUES ('', ?, ?, ?, ? , '',?)");
                             $stmt->bind_param('issss', $uid, $titleInput, $_POST['comment'], $date, $newFileName);
                             $stmt->execute();
                             $result = $stmt->get_result();
-                        } else {
+
+                            // redirect to home
+                            header("location:../dashboard/home.php");
+                        }
+                        // large file size
+                        else {
                             showNotification("File is too large.");
                         }
-                    } else {
+                    }
+                    // file has error
+                    else {
                         showNotification("File error.Try another file.");
                     }
-                } else {
+                }
+                // invalid extension
+                else {
                     showNotification("Invalid File format.");
                 }
             }
         } catch (Exception $e) {
             showNotification("Something went wrong");
         }
-
-        // redirect to home
-        header("location:../dashboard/home.php");
     }
     // }
 }

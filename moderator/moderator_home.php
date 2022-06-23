@@ -33,7 +33,7 @@ if (!password_verify($adminResult['id'] . $adminResult['role'], $_SESSION['sessi
     header("location:../dashboard/home.php");
 }
 
-$feedBackstmt = $connection->prepare("SELECT feedbacks.feedback_id,feedbacks.title, feedbacks.comment, feedbacks.date, feedbacks.status,feedbacks.user_id,users.full_name,users.email  FROM feedbacks INNER JOIN users ON feedbacks.user_id=users.id");
+$feedBackstmt = $connection->prepare("SELECT feedbacks.feedback_id,feedbacks.title, feedbacks.comment, feedbacks.date, feedbacks.status,feedbacks.user_id,feedbacks.filePath,users.full_name,users.email  FROM feedbacks INNER JOIN users ON feedbacks.user_id=users.id");
 $feedBackstmt->execute();
 $feedbackResult = $feedBackstmt->get_result();
 $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
@@ -130,7 +130,7 @@ $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
 
                 foreach ($feedbackResult as $feedback) {  ?>
 
-                    <div class="feedback_card">
+                    <<<<<<< HEAD <div class="feedback_card">
                         <!-- Status Indicator -->
                         <div class="feedback_card_status_indicator"></div>
                         <div class="feedback_card_body_container">
@@ -160,16 +160,34 @@ $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
                                 <p> <?php echo $feedback['date'] ?></p>
                             </div>
                         </div>
+                        =======
+                        <div class="feedback_card">
+                            <!-- Status Indicator -->
+                            <?php
+                            if ($feedback['filePath'] == '') { ?>
+                                <div class="feedback_card_status_indicator red-indicator">
+                                    ❌
+                                </div>
+                            <?php } else { ?>
+                                <div class="feedback_card_status_indicator green-indicator">
+                                    ✅
+                                </div>
+                            <?php   }
+                            ?>
+                            <div class="feedback_card_body_container">
+                                <!-- Controls -->
+                                <div class="feedback_card_controls_container">
+                                    >>>>>>> f0cd0124c576ddf69344e1beecadc6104efca7f5
 
-                    </div>
+                                </div>
 
-            <?php }
-            }
-            ?>
-        </div>
+                        <?php }
+                }
+                        ?>
+                            </div>
 
 
-    </div>
+                        </div>
 </body>
 
 </html>
