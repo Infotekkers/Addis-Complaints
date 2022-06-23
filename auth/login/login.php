@@ -69,7 +69,7 @@ function loginUser($connection)
 
 
 
-                        setcookie("SSID", $_SESSION['uid'], time() + 2 * 24 * 60 * 60, "/", "/", secure: true, httponly: true);
+                        // setcookie("SSID", $_SESSION['uid'], time() + 2 * 24 * 60 * 60, "/", "/", secure: true, httponly: true);
 
                         // reset attempt count
                         $stmt = $connection->prepare("UPDATE users SET attemptCount=0 WHERE email=?");

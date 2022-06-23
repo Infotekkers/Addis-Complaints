@@ -1,6 +1,8 @@
 <?php
 
 include "../../config/db.php";
+include "../../redirect.php";
+
 
 $show_notification_message = false;
 $notification_message_content = "";
@@ -67,8 +69,9 @@ function registerUser($connection)
                 $stmt->bind_param('sss', $fullNameInput, $emailInput, $passwordHash);
                 $stmt->execute();
                 $result = $stmt->get_result();
-
-                header("location:../login/login.php");
+                $base_url = "http://localhost:3000";
+                // header("location:../login/login.php");
+                Redirect("$base_url/auth/login/login.php");
                 exit;
             }
         }
