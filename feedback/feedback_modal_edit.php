@@ -2,6 +2,7 @@
 
 include "../config/db.php";
 session_start();
+session_regenerate_id();
 
 if (!isset($_SESSION['uid'])) {
     header("location:../auth/login/login.php");
@@ -23,91 +24,100 @@ function showNotification($notificationMessage)
 
 function editComment($connection, $commentId)
 {
-    $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
-    $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
 
-    $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    $emailPattern = "/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/";
+    // check token
+    $token = filter_input(INPUT_POST, 'antiCSRFToken', FILTER_SANITIZE_SPECIAL_CHARS);
+    if (!$token || $token !== $_SESSION['antiCSRFToken']) {
+        showNotification("Malicious Attempt!");
+        session_destroy();
+        header("location:../auth/login/login.php");
+    } else {
+        $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
+        $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
 
-    $titleInput = filter_var($_POST['title'], FILTER_SANITIZE_SPECIAL_CHARS);
-    $titlePattern = "/^[a-zA-Z0-9_.-]*$/";
+        $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+        $emailPattern = "/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/";
 
-    $commentInput = filter_var($_POST['comment'], FILTER_SANITIZE_SPECIAL_CHARS);
-    $commentPattern = "/^[a-zA-Z0-9_.-]*$/";
+        $titleInput = filter_var($_POST['title'], FILTER_SANITIZE_SPECIAL_CHARS);
+        $titlePattern = "/^[a-zA-Z0-9_.-]*$/";
 
-    // check full name
-    if (!preg_match($fullNamePattern, $fullNameInput) || strlen($fullNameInput) > 24) {
-        showNotification("Invalid Name");
-    }
+        $commentInput = filter_var($_POST['comment'], FILTER_SANITIZE_SPECIAL_CHARS);
+        $commentPattern = "/^[a-zA-Z0-9_.-]*$/";
 
-    // check email
-    if (!preg_match($emailPattern, $emailInput)) {
-        showNotification("Invalid Email");
-    }
-
-    // check title
-    // if (!preg_match($titlePattern, $titleInput)) {
-    //     showNotification("Invalid title");
-    // }
-
-    // check comment
-    // if (!preg_match($commentPattern, $commentInput)) {
-    //     showNotification("Invalid comment");
-    // } 
-
-    else {
-        $uid  = $_SESSION['uid'];
-
-
-        try {
-            $fileToUpload = $_FILES['file'];
-            $fileSize = $_FILES['file']['size'];
-            $fileTempLocation = $_FILES['file']['tmp_name'];
-            $fileError = $_FILES['file']['error'];
-            $fileName = $_FILES['file']['name'];
-            $fileType = $_FILES['file']['type'];
-            $fileExtension = explode(".", $fileName);
-            $fileExtensionLwr = strtolower(end($fileExtension));
-
-
-            $allowedFileExtensions = array("pdf");
-            print_r($fileToUpload);
-
-            // if no file is selected
-            if ($fileSize === 0 && $fileError !== 0) {
-                $editStmt = $connection->prepare("UPDATE feedbacks SET title=?,comment=? WHERE feedback_id=?");
-                $editStmt->bind_param('ssi',  $titleInput, $commentInput, $commentId);
-                $editStmt->execute();
-                $result = $editStmt->get_result();
-            } else {
-                if (in_array($fileExtensionLwr, $allowedFileExtensions)) {
-                    if ($fileError === 0) {
-                        if ($fileSize < 25000000) {
-                            $newFileName = uniqid("", true) . "." . $fileExtensionLwr;
-                            $fileUploadRoot = "../uploads/" . $newFileName;
-                            move_uploaded_file($fileTempLocation, $fileUploadRoot);
-
-
-                            $editStmt = $connection->prepare("UPDATE feedbacks SET title=?,comment=?,filePath=? WHERE feedback_id=?");
-                            $editStmt->bind_param('sssi',  $titleInput, $commentInput, $newFileName, $commentId,);
-                            $editStmt->execute();
-                            $result = $editStmt->get_result();
-                        } else {
-                            showNotification("File is too large.");
-                        }
-                    } else {
-                        showNotification("File error.Try another file.");
-                    }
-                } else {
-                    showNotification("Invalid File format.");
-                }
-            }
-        } catch (Exception $e) {
-            showNotification("Something went wrong");
+        // check full name
+        if (!preg_match($fullNamePattern, $fullNameInput) || strlen($fullNameInput) > 24) {
+            showNotification("Invalid Name");
         }
 
-        // redirect to home
-        header("location:../dashboard/home.php");
+        // check email
+        if (!preg_match($emailPattern, $emailInput)) {
+            showNotification("Invalid Email");
+        }
+
+        // check title
+        // if (!preg_match($titlePattern, $titleInput)) {
+        //     showNotification("Invalid title");
+        // }
+
+        // check comment
+        // if (!preg_match($commentPattern, $commentInput)) {
+        //     showNotification("Invalid comment");
+        // } 
+
+        else {
+            $uid  = $_SESSION['uid'];
+
+
+            try {
+                $fileToUpload = $_FILES['file'];
+                $fileSize = $_FILES['file']['size'];
+                $fileTempLocation = $_FILES['file']['tmp_name'];
+                $fileError = $_FILES['file']['error'];
+                $fileName = $_FILES['file']['name'];
+                $fileType = $_FILES['file']['type'];
+                $fileExtension = explode(".", $fileName);
+                $fileExtensionLwr = strtolower(end($fileExtension));
+
+
+                $allowedFileExtensions = array("pdf");
+                print_r($fileToUpload);
+
+                // if no file is selected
+                if ($fileSize === 0 && $fileError !== 0) {
+                    $editStmt = $connection->prepare("UPDATE feedbacks SET title=?,comment=? WHERE feedback_id=?");
+                    $editStmt->bind_param('ssi',  $titleInput, $commentInput, $commentId);
+                    $editStmt->execute();
+                    $result = $editStmt->get_result();
+                } else {
+                    if (in_array($fileExtensionLwr, $allowedFileExtensions)) {
+                        if ($fileError === 0) {
+                            if ($fileSize < 25000) {
+                                $newFileName = uniqid("", true) . "." . $fileExtensionLwr;
+                                $fileUploadRoot = "../uploads/" . $newFileName;
+                                move_uploaded_file($fileTempLocation, $fileUploadRoot);
+
+
+                                $editStmt = $connection->prepare("UPDATE feedbacks SET title=?,comment=?,filePath=? WHERE feedback_id=?");
+                                $editStmt->bind_param('sssi',  $titleInput, $commentInput, $newFileName, $commentId,);
+                                $editStmt->execute();
+                                $result = $editStmt->get_result();
+                            } else {
+                                showNotification("File is too large.");
+                            }
+                        } else {
+                            showNotification("File error.Try another file.");
+                        }
+                    } else {
+                        showNotification("Invalid File format.");
+                    }
+                }
+            } catch (Exception $e) {
+                showNotification("Something went wrong");
+            }
+
+            // redirect to home
+            header("location:../dashboard/home.php");
+        }
     }
 }
 
@@ -121,6 +131,19 @@ if ($_GET) {
     $filePath = filter_var($_GET['filePath'], FILTER_SANITIZE_SPECIAL_CHARS);
 } else if ($_POST) {
     editComment($connection, $_POST['commentId']);
+
+    $secret = "6LdM_jMgAAAAAHomg-xBvg2IXJMljM-mJMEPAtU8";
+    $response = $_POST['g-recaptcha-response'];
+    $remoteip = $_SERVER['REMOTE_ADDR'];
+    $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response&remoteip=$remoteip";
+    $data = file_get_contents($url);
+    $row = json_decode($data, true);
+    if ($row['success'] == "true") {
+        editComment($connection, $_POST['commentId']);
+    } else {
+        // header("Refresh:0");
+        showNotification("Captcha Failed");
+    }
 }
 
 
@@ -179,11 +202,17 @@ if ($_GET) {
                     <label for="email" class="feedback_form_label">Title</label>
                     <select name="title" value="<?php echo (isset($title)) ? $title : ''; ?>" required>
                         <option disabled selected></option>
-                        <option value="Corruption" <?php if($title == 'Corruption'): ?> selected="selected"<?php endif; ?>>Corruption</option>
-                        <option value="Parking Issues" <?php if($title == 'Parking Issues'): ?> selected="selected"<?php endif; ?>>Parking Issues</option>
-                        <option value="Potholes" <?php if($title == 'Potholes'): ?> selected="selected"<?php endif; ?>>Potholes</option>
-                        <option value="Public Property Abuse" <?php if($title == 'Public Property Abuse'): ?> selected="selected"<?php endif; ?>>Public Property Abuse</option>
-                        <option value="Transport Issues" <?php if($title == 'Transport Issues'): ?> selected="selected"<?php endif; ?>>Transport Issues</option>
+                        <option value="Corruption" <?php if ($title == 'Corruption') : ?> selected="selected"
+                            <?php endif; ?>>Corruption</option>
+                        <option value="Parking Issues" <?php if ($title == 'Parking Issues') : ?> selected="selected"
+                            <?php endif; ?>>Parking Issues</option>
+                        <option value="Potholes" <?php if ($title == 'Potholes') : ?> selected="selected"
+                            <?php endif; ?>>
+                            Potholes</option>
+                        <option value="Public Property Abuse" <?php if ($title == 'Public Property Abuse') : ?>
+                            selected="selected" <?php endif; ?>>Public Property Abuse</option>
+                        <option value="Transport Issues" <?php if ($title == 'Transport Issues') : ?>
+                            selected="selected" <?php endif; ?>>Transport Issues</option>
                     </select>
                 </div>
 
@@ -192,7 +221,14 @@ if ($_GET) {
                     <label for="comment" class="feedback_form_label">Comment</label>
                     <!-- <span id="word-count">0/100</span> -->
                     <span>(500 characters minimum)</span>
-                    <textarea name="comment" cols="30" rows="12" minlength="500" required><?php echo (isset($comment)) ? $comment : ''; ?></textarea>
+                    <textarea name="comment" cols="30" rows="12" minlength="500"
+                        required><?php echo (isset($comment)) ? $comment : ''; ?></textarea>
+                </div>
+
+                <div>Hey</div>
+                <!-- captcha -->
+                <div class="captcha_container">
+                    <div class="g-recaptcha" data-sitekey="6LdM_jMgAAAAAC7VXyp8sdSNulMdZa8s68zNDsWE"></div>
                 </div>
 
                 <!-- submit -->
@@ -210,3 +246,6 @@ if ($_GET) {
         </script>
     </section>
 </body>
+
+<!-- Google Captcha v2 -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>

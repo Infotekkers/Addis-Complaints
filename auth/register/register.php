@@ -116,7 +116,7 @@ if ($_POST) {
     <section class="register_page_left_container">
         <p class="register_page_left_title">Addis Complaints </div>
 
-        <form class="register_page_form_container" method="POST">
+        <form class="register_page_form_container" method="POST" autocomplete="off">
 
             <!-- Title -->
             <h1>Create Account</h1>

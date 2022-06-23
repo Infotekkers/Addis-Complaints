@@ -1,6 +1,7 @@
 <?php
 include "../../config/db.php";
 session_start();
+session_regenerate_id();
 
 if (isset($_SESSION['uid'])) {
     header("location:../../dashboard/home.php");
@@ -65,6 +66,9 @@ function loginUser($connection)
                         $_SESSION['uid'] = $result['id'];
                         $_SESSION['name'] = $result['full_name'];
 
+
+
+                        setcookie("SSID", $_SESSION['uid'], time() + 2 * 24 * 60 * 60, "/", "/", secure: true, httponly: true);
 
                         // reset attempt count
                         $stmt = $connection->prepare("UPDATE users SET attemptCount=0 WHERE email=?");
@@ -134,7 +138,7 @@ if ($_POST) {
 
         <p class="login_page_left_title">Addis Complaints </div>
 
-        <form action="" class="login_page_form_container" method="POST">
+        <form action="" class="login_page_form_container" method="POST" autocomplete="off">
             <!-- Title -->
             <h1>Log in</h1>
 

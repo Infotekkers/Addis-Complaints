@@ -2,6 +2,7 @@
 
 include "../config/db.php";
 session_start();
+session_regenerate_id();
 
 
 if (!isset($_SESSION['uid'])) {
@@ -73,17 +74,17 @@ $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
                 </div>
 
                 <div class="user_card_controls">
-                    <form action="./reset_user.php" method="POST">
+                    <form action="./reset_user.php" method="POST" autocomplete="off">
                         <input type="text" name="userId" value="<?php echo $user['id'] ?>" hidden>
                         <input type="number" value="1" name="status" hidden>
                         <input type="submit" value="Activate">
                     </form>
-                    <form action="./reset_user.php" method="POST">
+                    <form action="./reset_user.php" method="POST" autocomplete="off">
                         <input type="text" name="userId" value="<?php echo $user['id'] ?>" hidden>
                         <input type="number" value="0" name="status" hidden>
                         <input type="submit" value="Deactivate">
                     </form>
-                    <form action="./reset_user.php" method="POST">
+                    <form action="./reset_user.php" method="POST" autocomplete="off">
                         <input type="text" name="userId" value="<?php echo $user['id'] ?>" hidden>
                         <input type="submit" value="Reset">
                     </form>

@@ -4,6 +4,7 @@
 include "../../config/db.php";
 
 session_start();
+session_regenerate_id();
 
 $show_notification_message = false;
 $notification_message_content = "";
@@ -118,7 +119,7 @@ if ($_POST) {
 
         <p class="login_page_left_title">Addis Complaints </div>
 
-        <form action="" class="login_page_form_container" method="POST">
+        <form action="" class="login_page_form_container" method="POST" autocomplete="off">
             <!-- Title -->
             <h1>Log in</h1>
 

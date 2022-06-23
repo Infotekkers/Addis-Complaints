@@ -2,6 +2,8 @@
 
 include "../config/db.php";
 session_start();
+session_regenerate_id();
+$_SESSION['antiCSRFToken'] = bin2hex(random_bytes(35));
 
 
 if (!isset($_SESSION['uid'])) {
@@ -63,8 +65,9 @@ if (!empty($result)) {
 
             <!-- Add Button -->
             <form action="../feedback/feedback_modal_add.php" method="POST" class="add-feedback-button-container"
-                id="open-modal">
+                id="open-modal" autocomplete="off">
 
+                <input type="text" name="antiCSRFToken" value="<?= $_SESSION['antiCSRFToken'] ?? '' ?>" hidden>
                 <input type="text" name="full_name" value="" hidden>
                 <input type="text" name="isSubmit" value="0" hidden>
                 <input type="text" name="email" value="" hidden>
@@ -107,7 +110,10 @@ if (!empty($result)) {
 
 
                         <!-- edit -->
-                        <form action="../feedback/feedback_modal_edit.php" method="GET">
+                        <form action="../feedback/feedback_modal_edit.php" method="GET" autocomplete="off">
+
+                            <input type="text" name="antiCSRFToken" value="<?= $_SESSION['antiCSRFToken'] ?? '' ?>"
+                                hidden>
 
                             <input type="text" name="filePath"
                                 value="<?php echo filter_var($complaint['filePath'], FILTER_SANITIZE_SPECIAL_CHARS) ?>"
@@ -134,9 +140,10 @@ if (!empty($result)) {
                         <div class="spacer"></div>
 
                         <!-- delete -->
-                        <form action="../feedback/delete_feedback.php" method="POST">
+                        <form action="../feedback/delete_feedback.php" method="POST" autocomplete="off">
 
-
+                            <input type="text" name="antiCSRFToken" value="<?= $_SESSION['antiCSRFToken'] ?? '' ?>"
+                                hidden>
                             <input type="text" name="title"
                                 value="<?php echo filter_var($complaint['title'], FILTER_SANITIZE_SPECIAL_CHARS) ?>"
                                 hidden>
