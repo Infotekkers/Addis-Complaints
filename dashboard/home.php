@@ -66,8 +66,6 @@ if (!empty($result)) {
             <!-- Add Button -->
             <form action="../feedback/feedback_modal_add.php" method="POST" class="add-feedback-button-container"
                 id="open-modal" autocomplete="off">
-
-                <input type="text" name="antiCSRFToken" value="<?= $_SESSION['antiCSRFToken'] ?? '' ?>" hidden>
                 <input type="text" name="full_name" value="" hidden>
                 <input type="text" name="isSubmit" value="0" hidden>
                 <input type="text" name="email" value="" hidden>
