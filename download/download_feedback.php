@@ -1,6 +1,6 @@
 <?php
 
-include "../../config/db/user.php";
+include "../config/db/user.php";
 include "../inc/redirect.php";
 session_start();
 session_regenerate_id();

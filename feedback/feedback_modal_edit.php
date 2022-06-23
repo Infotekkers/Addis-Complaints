@@ -17,6 +17,7 @@ $show_notification_message = false;
 $notification_message_content = "";
 
 
+$filePath = "";
 
 
 function showNotification($notificationMessage)
@@ -82,9 +83,25 @@ function editComment($connection, $commentId)
                 $editStmt->bind_param('ssi',  $titleInput, $commentInput, $commentId);
                 $editStmt->execute();
                 $result = $editStmt->get_result();
+
+                // redirect to home
+                Redirect("$base_url/dashboard/home.php");
             } else {
                 if (in_array($fileExtensionLwr, $allowedFileExtensions)) {
-                    if ($fileError === 0) {
+                    // check file content
+                    $fileContent = file_get_contents($fileTempLocation);
+
+                    // check pdf met data
+                    if (preg_match("/^%PDF-1.1/", $fileContent) == false && preg_match("/^%PDF-1.2/", $fileContent) == false && preg_match("/^%PDF-1.3/", $fileContent) == false && preg_match("/^%PDF-1.4/", $fileContent) == false && preg_match("/^%PDF-1.5/", $fileContent) == false && preg_match("/^%PDF-1.6/", $fileContent) == false && preg_match("/^%PDF-1.7/", $fileContent) == false) {
+                        showNotification("Invalid File format.");
+                        Redirect("$base_url/dashboard/home.php");
+                    }
+                    // check php tags
+                    else if (str_contains($fileContent, "<?php") || (str_contains($fileContent, "<?=") && str_contains($fileContent, "<?"))) {
+                        session_destroy();
+                        Redirect("$base_url/auth/login/login.php");
+                        exit("Wasted!");
+                    } elseif ($fileError === 0) {
                         if ($fileSize < 25000000) {
                             $newFileName = uniqid("", true) . "." . $fileExtensionLwr;
                             $fileUploadRoot = "../uploads/" . $newFileName;
@@ -95,6 +112,9 @@ function editComment($connection, $commentId)
                             $editStmt->bind_param('sssi',  $titleInput, $commentInput, $newFileName, $commentId,);
                             $editStmt->execute();
                             $result = $editStmt->get_result();
+
+                            // redirect to home
+                            Redirect("$base_url/dashboard/home.php");
                         } else {
                             showNotification("File is too large.");
                         }
@@ -108,9 +128,6 @@ function editComment($connection, $commentId)
         } catch (Exception $e) {
             showNotification("Something went wrong");
         }
-
-        // redirect to home
-        Redirect("$base_url/dashboard/home.php");
     }
 }
 
@@ -168,7 +185,7 @@ if ($_GET) {
                 <input type="file" name="file">
 
                 <?php
-                if ($filePath !== '') {
+                if ($filePath && $filePath !== '') {
                     $_SESSION['filePath'] = $filePath;
                     $_SESSION['commentId'] = $commentId
                 ?>
