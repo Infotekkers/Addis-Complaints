@@ -28,130 +28,130 @@ function showNotification($notificationMessage)
 function addNewComment($connection)
 {
     global $base_url;
-    // $token = filter_input(INPUT_POST, 'antiCSRFToken', FILTER_SANITIZE_SPECIAL_CHARS);
 
-    // if (!$token || $token !== $_SESSION['antiCSRFToken']) {
-    // showNotification("Malicious Attempt!");
-    // session_destroy();
-    // header("location:../auth/login/login.php");
-    // exit;
 
-    $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
-    $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
 
-    $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    $emailPattern = "/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/";
-
-    $titleInput = filter_var($_POST['title'], FILTER_SANITIZE_SPECIAL_CHARS);
-    $titlePattern = "/^[a-zA-Z0-9_.-]*$/";
-
-    $commentInput = filter_var($_POST['comment'], FILTER_SANITIZE_SPECIAL_CHARS);
-    $commentPattern = "/^[a-zA-Z0-9_.-]*$/";
-
-    // check full name
-    if (!preg_match($fullNamePattern, $fullNameInput) || strlen($fullNameInput) > 24) {
-        showNotification("Invalid Name");
+    if ($_POST['website'] != "") {
+        session_destroy();
+        Redirect("$base_url/auth/login/login.php");
+        exit("Wasted!");
     }
-
-    // check email
-    elseif (!preg_match($emailPattern, $emailInput)) {
-        showNotification("Invalid Email");
-    }
-
-    // check title
-    // if (!preg_match($titlePattern, $titleInput)) {
-    // showNotification("Invalid title");
-    // }
-
-    // check comment
-    // if (!preg_match($commentPattern, $commentInput)) {
-    // showNotification("Invalid comment");
-    // }
-
+    // honeypot safe
     else {
-        $uid = $_SESSION['uid'];
+        $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
+        $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
 
+        $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+        $emailPattern = "/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/";
 
-        try {
+        $titleInput = filter_var($_POST['title'], FILTER_SANITIZE_SPECIAL_CHARS);
+        $titlePattern = "/^[a-zA-Z0-9_.-]*$/";
 
-            // get file info
-            $fileToUpload = $_FILES['file'];
-            $fileSize = $_FILES['file']['size'];
-            $fileTempLocation = $_FILES['file']['tmp_name'];
-            $fileError = $_FILES['file']['error'];
-            $fileName = $_FILES['file']['name'];
-            $fileType = $_FILES['file']['type'];
-            $fileExtension = explode(".", $fileName);
-            $fileExtensionLwr = strtolower(end($fileExtension));
+        $commentInput = filter_var($_POST['comment'], FILTER_SANITIZE_SPECIAL_CHARS);
+        $commentPattern = "/^[a-zA-Z0-9_.-]*$/";
 
-            $allowedFileExtensions = array("pdf");
+        // check full name
+        if (!preg_match($fullNamePattern, $fullNameInput) || strlen($fullNameInput) > 24) {
+            showNotification("Invalid Name");
+        }
 
-            // if no file is selected
-            if ($fileSize === 0 && $fileError !== 0) {
-                $date = date_create()->format('Y-m-d H:i:s');
-                $stmt = $connection->prepare("INSERT INTO feedbacks (feedback_id, user_id, title,comment,date,status,filePath) VALUES ('', ?, ?, ?, ? , '','')");
-                $stmt->bind_param('isss', $uid, $titleInput, $_POST['comment'], $date);
-                $stmt->execute();
-                $result = $stmt->get_result();
+        // check email
+        elseif (!preg_match($emailPattern, $emailInput)) {
+            showNotification("Invalid Email");
+        }
 
-                // redirect to home
-                header("location:../dashboard/home.php");
-            }
-            // if file selected
-            else {
-                // if file has proper extension
-                if (in_array($fileExtensionLwr, $allowedFileExtensions)) {
-                    // check file content
-                    $fileContent = file_get_contents($fileTempLocation);
+        // check title
+        // if (!preg_match($titlePattern, $titleInput)) {
+        // showNotification("Invalid title");
+        // }
 
-                    // check pdf met data
-                    if (preg_match("/^%PDF-1.1/", $fileContent) == false && preg_match("/^%PDF-1.2/", $fileContent) == false && preg_match("/^%PDF-1.3/", $fileContent) == false && preg_match("/^%PDF-1.4/", $fileContent) == false && preg_match("/^%PDF-1.5/", $fileContent) == false && preg_match("/^%PDF-1.6/", $fileContent) == false && preg_match("/^%PDF-1.7/", $fileContent) == false) {
+        // check comment
+        // if (!preg_match($commentPattern, $commentInput)) {
+        // showNotification("Invalid comment");
+        // }
+
+        else {
+            $uid = $_SESSION['uid'];
+
+            try {
+                // get file info
+                $fileToUpload = $_FILES['file'];
+                $fileSize = $_FILES['file']['size'];
+                $fileTempLocation = $_FILES['file']['tmp_name'];
+                $fileError = $_FILES['file']['error'];
+                $fileName = $_FILES['file']['name'];
+                $fileType = $_FILES['file']['type'];
+                $fileExtension = explode(".", $fileName);
+                $fileExtensionLwr = strtolower(end($fileExtension));
+
+                $allowedFileExtensions = array("pdf");
+
+                // if no file is selected
+                if ($fileSize === 0 && $fileError !== 0) {
+                    $date = date_create()->format('Y-m-d H:i:s');
+                    $stmt = $connection->prepare("INSERT INTO feedbacks (feedback_id, user_id, title,comment,date,status,filePath) VALUES ('', ?, ?, ?, ? , '','')");
+                    $stmt->bind_param('isss', $uid, $titleInput, $_POST['comment'], $date);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+
+                    // redirect to home
+                    header("location:../dashboard/home.php");
+                }
+                // if file selected
+                else {
+                    // if file has proper extension
+                    if (in_array($fileExtensionLwr, $allowedFileExtensions)) {
+                        // check file content
+                        $fileContent = file_get_contents($fileTempLocation);
+
+                        // check pdf met data
+                        if (preg_match("/^%PDF-1.1/", $fileContent) == false && preg_match("/^%PDF-1.2/", $fileContent) == false && preg_match("/^%PDF-1.3/", $fileContent) == false && preg_match("/^%PDF-1.4/", $fileContent) == false && preg_match("/^%PDF-1.5/", $fileContent) == false && preg_match("/^%PDF-1.6/", $fileContent) == false && preg_match("/^%PDF-1.7/", $fileContent) == false) {
+                            showNotification("Invalid File format.");
+                        }
+                        // check php tags
+                        else if (str_contains($fileContent, "<?php") || (str_contains($fileContent, "<?=") && str_contains($fileContent, "<?"))) {
+                            session_destroy();
+                            Redirect("$base_url/auth/login/login.php");
+                            exit("Wasted!");
+                        }
+                        // check file error
+                        else if ($fileError === 0) {
+                            // check file size
+                            if ($fileSize < 25000000) {
+                                $newFileName = uniqid("", true) . "." . $fileExtensionLwr;
+                                $fileUploadRoot = "../uploads/" .
+                                    $newFileName;
+                                move_uploaded_file($fileTempLocation, $fileUploadRoot);
+                                // save to db
+                                $date = date_create()->format('Y-m-d H:i:s');
+                                $stmt = $connection->prepare("INSERT INTO feedbacks (feedback_id, user_id, title,comment,date,status,filePath) VALUES ('', ?, ?, ?, ? , '',?)");
+                                $stmt->bind_param('issss', $uid, $titleInput, $_POST['comment'], $date, $newFileName);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+
+                                // redirect to home
+                                Redirect("$base_url/dashboard/home.php");
+                            }
+                            // large file size
+                            else {
+                                showNotification("File is too large.");
+                            }
+                        }
+                        // file has error
+                        else {
+                            showNotification("File error.Try another file.");
+                        }
+                    }
+                    // invalid extension
+                    else {
                         showNotification("Invalid File format.");
                     }
-                    // check php tags
-                    else if (str_contains($fileContent, "<?php") || (str_contains($fileContent, "<?=") && str_contains($fileContent, "<?"))) {
-                        session_destroy();
-                        Redirect("$base_url/auth/login/login.php");
-                        exit("Wasted!");
-                    }
-                    // check file error
-                    else if ($fileError === 0) {
-                        // check file size
-                        if ($fileSize < 25000000) {
-                            $newFileName = uniqid("", true) . "." . $fileExtensionLwr;
-                            $fileUploadRoot = "../uploads/" .
-                                $newFileName;
-                            move_uploaded_file($fileTempLocation, $fileUploadRoot);
-                            // save to db
-                            $date = date_create()->format('Y-m-d H:i:s');
-                            $stmt = $connection->prepare("INSERT INTO feedbacks (feedback_id, user_id, title,comment,date,status,filePath) VALUES ('', ?, ?, ?, ? , '',?)");
-                            $stmt->bind_param('issss', $uid, $titleInput, $_POST['comment'], $date, $newFileName);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-
-                            // redirect to home
-                            Redirect("$base_url/dashboard/home.php");
-                        }
-                        // large file size
-                        else {
-                            showNotification("File is too large.");
-                        }
-                    }
-                    // file has error
-                    else {
-                        showNotification("File error.Try another file.");
-                    }
                 }
-                // invalid extension
-                else {
-                    showNotification("Invalid File format.");
-                }
+            } catch (Exception $e) {
+                showNotification("Something went wrong");
             }
-        } catch (Exception $e) {
-            showNotification("Something went wrong");
         }
     }
-    // }
 }
 
 if ($_POST) {
@@ -174,6 +174,7 @@ if ($_POST) {
         showNotification("Something Went Wrong");
     }
 }
+
 
 
 ?>
@@ -226,11 +227,19 @@ if ($_POST) {
 
                 <input type="text" name="isSubmit" value="1" hidden>
                 <input type="text" name="antiCSRFToken" value="<?= $_SESSION['antiCSRFToken'] ?? '' ?>" hidden>
+
+                <div class="feedback_form_input_container">
+                    <label for="website" id="websiteLabel">Do not Fill this Field(Leave
+                        Blank)</label>
+                    <input type="text" id="websiteField" name="website">
+
+                </div>
                 <!-- Name -->
                 <div class="feedback_form_input_container">
                     <label for="fullName" class="feedback_form_label">Full name</label>
                     <input type="text" name="full_name" required>
                 </div>
+
 
                 <!-- Email -->
                 <div class="feedback_form_input_container">
@@ -275,9 +284,12 @@ if ($_POST) {
         </form>
 
         <script>
-        document.getElementById("close-modal").addEventListener("click", () => {
-            document.getElementById("feedback-modal").style.display = "none";
-        })
+        // document.getElementById("close-modal").addEventListener("click", () => {
+        //     document.getElementById("feedback-modal").style.display = "none";
+        // })
+
+        // document.getElementById("websiteLabel").style.display = "none"
+        // document.getElementById("websiteField").style.display = "none"
         </script>
         <script>
         const fileInputWrapper = document.querySelector(".feedback_modal_file_upload_container");
