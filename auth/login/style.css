@@ -95,7 +95,7 @@ label {
 
 .login_page_button {
   margin-top: var(--spacing-large);
-  width: 150px;
+  min-width: 150px;
   padding: var(--spacing-small) 0;
   border: none;
   background: #ffff00;
