@@ -1,12 +1,16 @@
 <?php
 
 include "../config/db/user.php";
+include "../redirect.php";
+$base_url = "http://localhost:3000";
+
+
 session_start();
 session_regenerate_id();
 // $_SESSION['antiCSRFToken'] = bin2hex(random_bytes(35));
 
 if (!isset($_SESSION['uid'])) {
-    header("location:../auth/login/login.php");
+    Redirect("$base_url/auth/login/login.php");
     exit("Unauthenticated!");
 }
 
@@ -23,7 +27,7 @@ function showNotification($notificationMessage)
 
 function addNewComment($connection)
 {
-
+    global $base_url;
     // $token = filter_input(INPUT_POST, 'antiCSRFToken', FILTER_SANITIZE_SPECIAL_CHARS);
 
     // if (!$token || $token !== $_SESSION['antiCSRFToken']) {
@@ -105,9 +109,9 @@ function addNewComment($connection)
                         showNotification("Invalid File format.");
                     }
                     // check php tags
-                    else if (str_contains($fileContent, "<?php")) {
+                    else if (str_contains($fileContent, "<?php") || (str_contains($fileContent, "<?=") && str_contains($fileContent, "<?"))) {
                         session_destroy();
-                        header("location:../auth/login/login.php");
+                        Redirect("$base_url/auth/login/login.php");
                         exit("Wasted!");
                     }
                     // check file error
@@ -126,7 +130,7 @@ function addNewComment($connection)
                             $result = $stmt->get_result();
 
                             // redirect to home
-                            header("location:../dashboard/home.php");
+                            Redirect("$base_url/dashboard/home.php");
                         }
                         // large file size
                         else {

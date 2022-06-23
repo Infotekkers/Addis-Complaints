@@ -2,6 +2,9 @@
 
 
 include "../../config/db/superadmin.php";
+include "./inc/redirect.php";
+$base_url = "http://localhost:3000";
+
 
 session_start();
 session_regenerate_id();
@@ -18,6 +21,7 @@ function showNotification($notificationMessage)
 
 function loginUser($connection)
 {
+    global $base_url;
 
     try {
         $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_SPECIAL_CHARS);
@@ -56,7 +60,7 @@ function loginUser($connection)
 
 
 
-                    header("location:../../sdashboard/superdash.php");
+                    Redirect("$base_url/sdashboard/superdash.php");
                     exit;
                 } else if ($result['password']) {
                     showNotification("Invalid email/password combination.");

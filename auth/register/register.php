@@ -2,6 +2,10 @@
 
 include "../../config/db/user.php";
 include "../../config/constants.php";
+include "../../inc/redirect.php";
+$base_url = "http://localhost:3000";
+
+
 
 $show_notification_message = false;
 $notification_message_content = "";
@@ -16,6 +20,7 @@ function showNotification($notificationMessage)
 
 function registerUser($connection, $salt)
 {
+    global $base_url;
     try {
         $fullNameInput = filter_var($_POST['fullName'], FILTER_SANITIZE_SPECIAL_CHARS);
         $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
@@ -68,8 +73,8 @@ function registerUser($connection, $salt)
                 $stmt->bind_param('sss', $fullNameInput, $emailInput, $passwordHash);
                 $stmt->execute();
                 $result = $stmt->get_result();
-
-                header("location:../login/login.php");
+                // header("location:../login/login.php");
+                Redirect("$base_url/auth/login/login.php");
                 exit;
             }
         }

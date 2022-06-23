@@ -2,12 +2,15 @@
 
 
 include "../../config/db/admin.php";
+include "../inc/redirect.php";
+$base_url = "http://localhost:3000";
+
 session_start();
 session_regenerate_id();
 
 
 if (!isset($_SESSION['uid'])) {
-    header("location:../auth/login/login.php");
+    Redirect("$base_url/auth/login/login.php");
     exit("Unauthenticated!");
 }
 
@@ -21,7 +24,7 @@ $adminResult = $Infostmt->get_result();
 $adminResult = $adminResult->fetch_array(MYSQLI_ASSOC);
 
 if (!password_verify($adminResult['id'] . $adminResult['role'], $_SESSION['sessionHash'])) {
-    header("location:../dashboard/home.php");
+    Redirect("$base_url/dashboard/home.php");
     exit("Unauthorized!");
 }
 
@@ -40,6 +43,7 @@ function showNotification($notificationMessage)
 
 function activateUser($connection)
 {
+    global $base_url;
     try {
         echo "Activating User";
         $userId = filter_var($_POST['userId'], FILTER_SANITIZE_SPECIAL_CHARS);
@@ -48,7 +52,7 @@ function activateUser($connection)
         $stmt->execute();
         $result = $stmt->get_result();
 
-        header("location:./moderator_home.php");
+        Redirect("$base_url/moderator/moderator_home.php");
     } catch (Exception $e) {
         showNotification("Something Went Wrong");
     }

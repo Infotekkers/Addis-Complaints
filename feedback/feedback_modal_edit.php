@@ -1,12 +1,15 @@
 <?php
 
 include "../config/db/user.php";
+include "../inc/redirect.php";
+$base_url = "http://localhost:3000";
+
 session_start();
 session_regenerate_id();
 $_SESSION['antiCSRFToken'] = bin2hex(random_bytes(35));
 
 if (!isset($_SESSION['uid'])) {
-    header("location:../auth/login/login.php");
+    Redirect("$base_url/auth/login/login.php");
     exit("Unauthenticated!");
 }
 
@@ -26,6 +29,7 @@ function showNotification($notificationMessage)
 
 function editComment($connection, $commentId)
 {
+    global $base_url;
     // check token
 
     $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
@@ -58,6 +62,7 @@ function editComment($connection, $commentId)
     else {
         $uid  = $_SESSION['uid'];
         try {
+
             $fileToUpload = $_FILES['file'];
             $fileSize = $_FILES['file']['size'];
             $fileTempLocation = $_FILES['file']['tmp_name'];
@@ -105,7 +110,7 @@ function editComment($connection, $commentId)
         }
 
         // redirect to home
-        header("location:../dashboard/home.php");
+        Redirect("$base_url/dashboard/home.php");
     }
 }
 
