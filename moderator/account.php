@@ -8,6 +8,7 @@ session_regenerate_id();
 
 if (!isset($_SESSION['uid'])) {
     header("location:../auth/login/login.php");
+    exit("Unauthenticated!");
 }
 
 $show_notification_message = false;
@@ -21,6 +22,7 @@ $adminResult = $adminResult->fetch_array(MYSQLI_ASSOC);
 
 if (!password_verify($adminResult['id'] . $adminResult['role'], $_SESSION['sessionHash'])) {
     header("location:../dashboard/home.php");
+    exit("Unauthorized!");
 }
 
 $feedBackstmt = $connection->prepare("SELECT feedbacks.feedback_id,feedbacks.title, feedbacks.comment, feedbacks.date, feedbacks.status,feedbacks.user_id,users.full_name,users.email  FROM feedbacks INNER JOIN users ON feedbacks.user_id=users.id");

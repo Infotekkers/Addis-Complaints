@@ -16,6 +16,17 @@ function showNotification($notificationMessage)
     include '../inc/notification.php';
 }
 
+$Infostmt = $connection->prepare("SELECT id, role FROM super_admin WHERE id=?");
+$Infostmt->bind_param('i', $userId);
+$Infostmt->execute();
+$adminResult = $Infostmt->get_result();
+$adminResult = $adminResult->fetch_array(MYSQLI_ASSOC);
+
+if (!password_verify($adminResult['id'] . $adminResult['role'], $_SESSION['sessionHash'])) {
+    header("location:../dashboard/home.php");
+    exit("Unauthorized!");
+}
+
 function registerSuperAdmin($connection)
 {
     $fullNameInput = filter_var($_POST['fullName'], FILTER_SANITIZE_SPECIAL_CHARS);
