@@ -1,12 +1,15 @@
 <?php
 
-include "../config/db.php";
+include "../config/db/user.php";
+include "../inc/redirect.php";
+$base_url = "http://localhost:3000";
+
 session_start();
 session_regenerate_id();
 $_SESSION['antiCSRFToken'] = bin2hex(random_bytes(35));
 
 if (!isset($_SESSION['uid'])) {
-    header("location:../auth/login/login.php");
+    Redirect("$base_url/auth/login/login.php");
     exit("Unauthenticated!");
 }
 
@@ -26,6 +29,7 @@ function showNotification($notificationMessage)
 
 function editComment($connection, $commentId)
 {
+    global $base_url;
     // check token
 
     $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
@@ -58,6 +62,7 @@ function editComment($connection, $commentId)
     else {
         $uid  = $_SESSION['uid'];
         try {
+
             $fileToUpload = $_FILES['file'];
             $fileSize = $_FILES['file']['size'];
             $fileTempLocation = $_FILES['file']['tmp_name'];
@@ -105,7 +110,7 @@ function editComment($connection, $commentId)
         }
 
         // redirect to home
-        header("location:../dashboard/home.php");
+        Redirect("$base_url/dashboard/home.php");
     }
 }
 
@@ -154,7 +159,8 @@ if ($_GET) {
     <section class="feedback_modal" id="feedback-modal">
 
 
-        <form class="feedback_modal_form_container" action="./feedback_modal_edit.php" method="POST" enctype="multipart/form-data">
+        <form class="feedback_modal_form_container" action="./feedback_modal_edit.php" method="POST"
+            enctype="multipart/form-data">
 
             <input type="text" name="antiCSRFToken" value="<?= $_SESSION['antiCSRFToken'] ?? '' ?>" hidden>
 
@@ -166,7 +172,7 @@ if ($_GET) {
                     $_SESSION['filePath'] = $filePath;
                     $_SESSION['commentId'] = $commentId
                 ?>
-                    <a href="../download/download_feedback.php" class="file-download-button">Download</a>
+                <a href="../download/download_feedback.php" class="file-download-button">Download</a>
                 <?php }
                 ?>
 
@@ -192,12 +198,17 @@ if ($_GET) {
                     <label for="email" class="feedback_form_label">Title</label>
                     <select name="title" value="<?php echo (isset($title)) ? $title : ''; ?>" required>
                         <option disabled selected></option>
-                        <option value="Corruption" <?php if ($title == 'Corruption') : ?> selected="selected" <?php endif; ?>>Corruption</option>
-                        <option value="Parking Issues" <?php if ($title == 'Parking Issues') : ?> selected="selected" <?php endif; ?>>Parking Issues</option>
-                        <option value="Potholes" <?php if ($title == 'Potholes') : ?> selected="selected" <?php endif; ?>>
+                        <option value="Corruption" <?php if ($title == 'Corruption') : ?> selected="selected"
+                            <?php endif; ?>>Corruption</option>
+                        <option value="Parking Issues" <?php if ($title == 'Parking Issues') : ?> selected="selected"
+                            <?php endif; ?>>Parking Issues</option>
+                        <option value="Potholes" <?php if ($title == 'Potholes') : ?> selected="selected"
+                            <?php endif; ?>>
                             Potholes</option>
-                        <option value="Public Property Abuse" <?php if ($title == 'Public Property Abuse') : ?> selected="selected" <?php endif; ?>>Public Property Abuse</option>
-                        <option value="Transport Issues" <?php if ($title == 'Transport Issues') : ?> selected="selected" <?php endif; ?>>Transport Issues</option>
+                        <option value="Public Property Abuse" <?php if ($title == 'Public Property Abuse') : ?>
+                            selected="selected" <?php endif; ?>>Public Property Abuse</option>
+                        <option value="Transport Issues" <?php if ($title == 'Transport Issues') : ?>
+                            selected="selected" <?php endif; ?>>Transport Issues</option>
                     </select>
                 </div>
 
@@ -206,7 +217,8 @@ if ($_GET) {
                     <label for="comment" class="feedback_form_label">Comment</label>
                     <!-- <span id="word-count">0/100</span> -->
                     <span>(500 characters minimum)</span>
-                    <textarea name="comment" cols="30" rows="12" minlength="500" required><?php echo (isset($comment)) ? $comment : ''; ?></textarea>
+                    <textarea name="comment" cols="30" rows="12" minlength="500"
+                        required><?php echo (isset($comment)) ? $comment : ''; ?></textarea>
                 </div>
 
 
@@ -224,9 +236,9 @@ if ($_GET) {
         </form>
 
         <script>
-            document.getElementById("close-modal").addEventListener("click", () => {
-                document.getElementById("feedback-modal").style.display = "none";
-            })
+        document.getElementById("close-modal").addEventListener("click", () => {
+            document.getElementById("feedback-modal").style.display = "none";
+        })
         </script>
     </section>
 </body>

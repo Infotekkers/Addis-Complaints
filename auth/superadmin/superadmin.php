@@ -1,7 +1,10 @@
 <?php
 
 
-include "../../config/db.php";
+include "../../config/db/superadmin.php";
+include "./inc/redirect.php";
+$base_url = "http://localhost:3000";
+
 
 session_start();
 session_regenerate_id();
@@ -18,6 +21,7 @@ function showNotification($notificationMessage)
 
 function loginUser($connection)
 {
+    global $base_url;
 
     try {
         $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_SPECIAL_CHARS);
@@ -56,7 +60,7 @@ function loginUser($connection)
 
 
 
-                    header("location:../../sdashboard/superdash.php");
+                    Redirect("$base_url/sdashboard/superdash.php");
                     exit;
                 } else if ($result['password']) {
                     showNotification("Invalid email/password combination.");
@@ -74,17 +78,21 @@ function loginUser($connection)
 // on post
 if ($_POST) {
     try {
-        $secret = "6LdM_jMgAAAAAHomg-xBvg2IXJMljM-mJMEPAtU8";
-        $response = $_POST['g-recaptcha-response'];
-        $remoteip = $_SERVER['REMOTE_ADDR'];
-        $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response&remoteip=$remoteip";
-        $data = file_get_contents($url);
-        $row = json_decode($data, true);
-        if ($row['success'] == "true") {
+        try {
+            $secret = "6LdM_jMgAAAAAHomg-xBvg2IXJMljM-mJMEPAtU8";
+            $response = $_POST['g-recaptcha-response'];
+            $remoteip = $_SERVER['REMOTE_ADDR'];
+            $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response&remoteip=$remoteip";
+            $data = file_get_contents($url);
+            $row = json_decode($data, true);
+            if ($row['success'] == "true") {
 
-            loginUser($connection);
-        } else {
-            showNotification("Captcha Failed");
+                loginUser($connection);
+            } else {
+                showNotification("Captcha Failed");
+            }
+        } catch (Exception $e) {
+            showNotification("Something Went Wrong");
         }
     } catch (Exception $e) {
         showNotification("Something Went Wrong");

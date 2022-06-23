@@ -1,6 +1,11 @@
 <?php
 
-include "../../config/db.php";
+include "../../config/db/user.php";
+include "../../config/constants.php";
+include "../../inc/redirect.php";
+$base_url = "http://localhost:3000";
+
+
 
 $show_notification_message = false;
 $notification_message_content = "";
@@ -13,8 +18,9 @@ function showNotification($notificationMessage)
     include '../../inc/notification.php';
 }
 
-function registerUser($connection)
+function registerUser($connection, $salt)
 {
+    global $base_url;
     try {
         $fullNameInput = filter_var($_POST['fullName'], FILTER_SANITIZE_SPECIAL_CHARS);
         $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
@@ -67,8 +73,8 @@ function registerUser($connection)
                 $stmt->bind_param('sss', $fullNameInput, $emailInput, $passwordHash);
                 $stmt->execute();
                 $result = $stmt->get_result();
-
-                header("location:../login/login.php");
+                // header("location:../login/login.php");
+                Redirect("$base_url/auth/login/login.php");
                 exit;
             }
         }
@@ -88,7 +94,7 @@ if ($_POST) {
         $data = file_get_contents($url);
         $row = json_decode($data, true);
         if ($row['success'] == "true") {
-            registerUser($connection);
+            registerUser($connection, $salt);
         } else {
 
             showNotification("Captcha Failed");

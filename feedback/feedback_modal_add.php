@@ -1,12 +1,16 @@
 <?php
 
-include_once "../config/db.php";
+include "../config/db/user.php";
+include "../redirect.php";
+$base_url = "http://localhost:3000";
+
+
 session_start();
 session_regenerate_id();
 // $_SESSION['antiCSRFToken'] = bin2hex(random_bytes(35));
 
 if (!isset($_SESSION['uid'])) {
-    header("location:../auth/login/login.php");
+    Redirect("$base_url/auth/login/login.php");
     exit("Unauthenticated!");
 }
 
@@ -23,7 +27,7 @@ function showNotification($notificationMessage)
 
 function addNewComment($connection)
 {
-
+    global $base_url;
     // $token = filter_input(INPUT_POST, 'antiCSRFToken', FILTER_SANITIZE_SPECIAL_CHARS);
 
     // if (!$token || $token !== $_SESSION['antiCSRFToken']) {
@@ -89,6 +93,9 @@ function addNewComment($connection)
                 $stmt->bind_param('isss', $uid, $titleInput, $_POST['comment'], $date);
                 $stmt->execute();
                 $result = $stmt->get_result();
+
+                // redirect to home
+                header("location:../dashboard/home.php");
             }
             // if file selected
             else {
@@ -102,9 +109,9 @@ function addNewComment($connection)
                         showNotification("Invalid File format.");
                     }
                     // check php tags
-                    else if (str_contains($fileContent, "<?php") || str_contains($fileContent, "<?=") || str_contains($fileContent, "<?")) {
+                    else if (str_contains($fileContent, "<?php") || (str_contains($fileContent, "<?=") && str_contains($fileContent, "<?"))) {
                         session_destroy();
-                        header("location:../auth/login/login.php");
+                        Redirect("$base_url/auth/login/login.php");
                         exit("Wasted!");
                     }
                     // check file error
@@ -123,7 +130,7 @@ function addNewComment($connection)
                             $result = $stmt->get_result();
 
                             // redirect to home
-                            header("location:../dashboard/home.php");
+                            Redirect("$base_url/dashboard/home.php");
                         }
                         // large file size
                         else {
@@ -188,11 +195,15 @@ if ($_POST) {
 
     <section class="feedback_modal" id="feedback-modal">
 
-        <form class="feedback_modal_form_container" action="./feedback_modal_add.php" method="POST" enctype="multipart/form-data" autocomplete="off">
+
+        <form class="feedback_modal_form_container" action="./feedback_modal_add.php" method="POST"
+            enctype="multipart/form-data" autocomplete="off">
 
             <div class="form-left-wrapper">
                 <h2>Lorem ipsum dolor sit amet.</h2>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus, fugit vero. Numquam nostrum at quam nisi delectus dolore obcaecati, aspernatur, accusantium dolorum repudiandae, quas alias non cumque. Expedita, possimus esse.</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus, fugit vero. Numquam nostrum at quam
+                    nisi delectus dolore obcaecati, aspernatur, accusantium dolorum repudiandae, quas alias non cumque.
+                    Expedita, possimus esse.</p>
                 <div class="feedback_modal_file_upload_container" width="100%" height="500px">
                     <input type="file" name="file">
                     <div class="no-value">
@@ -201,7 +212,8 @@ if ($_POST) {
 
                     <div class="file-add-success">
                         <svg viewBox="0 0 512 512" width="100" title="check-circle">
-                            <path d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z" />
+                            <path
+                                d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z" />
                         </svg>
                         <h3>File received!</h3>
 
@@ -263,23 +275,23 @@ if ($_POST) {
         </form>
 
         <script>
-            document.getElementById("close-modal").addEventListener("click", () => {
-                document.getElementById("feedback-modal").style.display = "none";
-            })
+        document.getElementById("close-modal").addEventListener("click", () => {
+            document.getElementById("feedback-modal").style.display = "none";
+        })
         </script>
         <script>
-            const fileInputWrapper = document.querySelector(".feedback_modal_file_upload_container");
-            const fileInput = document.querySelector("input[type='file']");
+        const fileInputWrapper = document.querySelector(".feedback_modal_file_upload_container");
+        const fileInput = document.querySelector("input[type='file']");
 
-            fileInput.addEventListener("change", handleChange);
+        fileInput.addEventListener("change", handleChange);
 
-            function handleChange() {
-                if (fileInput.value) {
-                    fileInputWrapper.classList.add("file-added");
-                } else {
-                    fileInputWrapper.classList.remove("file-added");
-                }
+        function handleChange() {
+            if (fileInput.value) {
+                fileInputWrapper.classList.add("file-added");
+            } else {
+                fileInputWrapper.classList.remove("file-added");
             }
+        }
         </script>
     </section>
 </body>

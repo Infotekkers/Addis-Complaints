@@ -1,7 +1,8 @@
 <?php
 
 
-include "../../config/db.php";
+include "../../config/db/admin.php";
+include "../../inc/redirect.php";
 
 session_start();
 session_regenerate_id();
@@ -68,6 +69,7 @@ function loginUser($connection)
                     $updateStmt->bind_param("ss", $sessionHash, $emailInput);
                     $status = $updateStmt->execute();
                     $result = $stmt->get_result();
+                    $base_url = "http://localhost:3000";
                     // showNotification($_SESSION['sessionHash']);
 
                     if ($status === false) {
@@ -76,7 +78,7 @@ function loginUser($connection)
                         return;
                     }
 
-                    header("location:../../moderator/moderator_home.php");
+                    Redirect("$base_url/moderator/moderator_home.php");
                 } else {
 
                     echo "Minus";
@@ -108,7 +110,6 @@ if ($_POST) {
         $data = file_get_contents($url);
         $row = json_decode($data, true);
         if ($row['success'] == "true") {
-
             loginUser($connection);
         } else {
             showNotification("Captcha Failed");

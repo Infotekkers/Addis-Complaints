@@ -1,6 +1,9 @@
 <?php
 
-include "../config/db.php";
+include "../config/db/superadmin.php";
+include "../inc/redirect.php";
+$base_url = "http://localhost:3000";
+
 
 $show_notification_message = false;
 $notification_message_content = "";
@@ -14,6 +17,17 @@ function showNotification($notificationMessage)
     $show_notification_message = true;
     $notification_message_content = $notificationMessage;
     include '../inc/notification.php';
+}
+
+$Infostmt = $connection->prepare("SELECT id, role FROM super_admin WHERE id=?");
+$Infostmt->bind_param('i', $userId);
+$Infostmt->execute();
+$adminResult = $Infostmt->get_result();
+$adminResult = $adminResult->fetch_array(MYSQLI_ASSOC);
+
+if (!password_verify($adminResult['id'] . $adminResult['role'], $_SESSION['sessionHash'])) {
+    Redirect("$base_url/dashboard/home.php");
+    exit("Unauthorized!");
 }
 
 function registerSuperAdmin($connection)

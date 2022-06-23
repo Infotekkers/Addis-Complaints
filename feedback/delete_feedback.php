@@ -1,11 +1,14 @@
 <?php
 
-include_once "../config/db.php";
+include "../config/db/user.php";
+include "../inc/redirect.php";
+$base_url = "http://localhost:3000";
+
 session_start();
 session_regenerate_id();
 
 if (!isset($_SESSION['uid'])) {
-    header("location:../auth/login/login.php");
+    Redirect("$base_url/auth/login/login.php");
     exit("Unauthenticated!");
 }
 
@@ -25,7 +28,7 @@ function showNotification($notificationMessage)
 
 function deleteComment($connection)
 {
-
+    global $base_url;
     try {
         // check token
         $token = filter_input(INPUT_POST, 'antiCSRFToken', FILTER_SANITIZE_SPECIAL_CHARS);
@@ -33,7 +36,7 @@ function deleteComment($connection)
         if (!$token || $token !== $_SESSION['antiCSRFToken']) {
             showNotification("Malicious Attempt!");
             session_destroy();
-            header("location:../auth/login/login.php");
+            Redirect("$base_url/auth/login/login.php");
             exit("Wasted!");
         } else {
             // get comment
@@ -55,9 +58,9 @@ function deleteComment($connection)
                     $result = $deleteStmt->get_result();
 
                     // redirect to home
-                    header("location:../dashboard/home.php");
+                    Redirect("$base_url/dashboard/home.php");
                 } else {
-                    header("location:../auth/login/login.php");
+                    Redirect("$base_url/auth/login/login.php");
                     showNotification("Malicious Attempt!");
                     exit("Wasted!");
                 }
