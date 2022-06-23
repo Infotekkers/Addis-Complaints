@@ -3,6 +3,8 @@
 
 include "../../config/db.php";
 include "../../inc/redirect.php";
+$base_url = "http://localhost:3000";
+
 
 session_start();
 session_regenerate_id();
@@ -19,7 +21,7 @@ function showNotification($notificationMessage)
 
 function loginUser($connection)
 {
-
+global $base_url;
     try {
         $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_SPECIAL_CHARS);
         $passwordInput = filter_var($_POST['password'], FILTER_SANITIZE_EMAIL);
@@ -69,7 +71,6 @@ function loginUser($connection)
                     $updateStmt->bind_param("ss", $sessionHash, $emailInput);
                     $status = $updateStmt->execute();
                     $result = $stmt->get_result();
-                    $base_url = "http://localhost:3000";
                     // showNotification($_SESSION['sessionHash']);
 
                     if ($status === false) {
