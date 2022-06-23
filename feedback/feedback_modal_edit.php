@@ -174,17 +174,25 @@ if ($_GET) {
                     <input type="text" name="email" value="<?php echo (isset($email)) ? $email : ''; ?>">
                 </div>
 
-                <!-- Email -->
+                <!-- Title -->
                 <div class="feedback_form_input_container">
                     <label for="email" class="feedback_form_label">Title</label>
-                    <input type="text" name="title" value="<?php echo (isset($title)) ? $title : ''; ?>">
+                    <select name="title" value="<?php echo (isset($title)) ? $title : ''; ?>" required>
+                        <option disabled selected></option>
+                        <option value="Corruption" <?php if($title == 'Corruption'): ?> selected="selected"<?php endif; ?>>Corruption</option>
+                        <option value="Parking Issues" <?php if($title == 'Parking Issues'): ?> selected="selected"<?php endif; ?>>Parking Issues</option>
+                        <option value="Potholes" <?php if($title == 'Potholes'): ?> selected="selected"<?php endif; ?>>Potholes</option>
+                        <option value="Public Property Abuse" <?php if($title == 'Public Property Abuse'): ?> selected="selected"<?php endif; ?>>Public Property Abuse</option>
+                        <option value="Transport Issues" <?php if($title == 'Transport Issues'): ?> selected="selected"<?php endif; ?>>Transport Issues</option>
+                    </select>
                 </div>
 
                 <!-- Text Area -->
                 <div class="feedback_form_input_container">
                     <label for="comment" class="feedback_form_label">Comment</label>
-                    <textarea name="comment" cols="30"
-                        rows="12"><?php echo (isset($comment)) ? $comment : ''; ?></textarea>
+                    <!-- <span id="word-count">0/100</span> -->
+                    <span>(500 characters minimum)</span>
+                    <textarea name="comment" cols="30" rows="12" minlength="500" required><?php echo (isset($comment)) ? $comment : ''; ?></textarea>
                 </div>
 
                 <!-- submit -->
