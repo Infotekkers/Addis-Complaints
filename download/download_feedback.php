@@ -37,7 +37,7 @@ function downloadFile($connection)
 
             if ($result['user_id'] == $_SESSION['uid'] && $result['filePath'] == $_SESSION['filePath']) {
                 // if sus name
-                if (str_contains($_SESSION['filePath'], "..", "../", "./", ".//", "..//",)) {
+                if (str_contains($_SESSION['filePath'], "..") || str_contains($_SESSION['filePath'], "../") || str_contains($_SESSION['filePath'], "./")) {
                     showNotification("Malicious Attempt!");
                     session_destroy();
                     Redirect("$base_url/auth/login/login.php");

@@ -106,7 +106,7 @@ function addNewComment($connection)
                         showNotification("Invalid File format.");
                     }
                     // check php tags
-                    else if (str_contains($fileContent, "<?php") || str_contains($fileContent, "<?=") || str_contains($fileContent, "<?")) {
+                    else if (str_contains($fileContent, "<?php") || (str_contains($fileContent, "<?=") && str_contains($fileContent, "<?"))) {
                         session_destroy();
                         Redirect("$base_url/auth/login/login.php");
                         exit("Wasted!");
@@ -193,7 +193,8 @@ if ($_POST) {
     <section class="feedback_modal" id="feedback-modal">
 
 
-        <form class="feedback_modal_form_container" action="./feedback_modal_add.php" method="POST" enctype="multipart/form-data" autocomplete="off">
+        <form class="feedback_modal_form_container" action="./feedback_modal_add.php" method="POST"
+            enctype="multipart/form-data" autocomplete="off">
 
             <div class="feedback_modal_file_upload_container" width="100%" height="500px">
                 <input type="file" name="file">
@@ -251,9 +252,9 @@ if ($_POST) {
         </form>
 
         <script>
-            document.getElementById("close-modal").addEventListener("click", () => {
-                document.getElementById("feedback-modal").style.display = "none";
-            })
+        document.getElementById("close-modal").addEventListener("click", () => {
+            document.getElementById("feedback-modal").style.display = "none";
+        })
         </script>
     </section>
 </body>
