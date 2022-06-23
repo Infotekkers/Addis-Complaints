@@ -176,6 +176,8 @@ textarea {
   padding: 0 var(--spacing-medium);
   display: flex;
   align-items: center;
+  font-family: var(--primary-font);
+  border-radius: 2px;
 }
 
 .feedback_submit_button_container > a:hover {
@@ -192,12 +194,14 @@ textarea {
   font-family: var(--primary-font);
   font-size: var(--text-base);
   letter-spacing: 0.15px;
-  font-weight: 500;
+  font-weight: 900;
   border-radius: 2px;
+
+  transition: border-radius 300ms;
 }
 
 .feedback_modal_form input[type="submit"]:hover {
-  font-weight: bold;
+  border-radius: 50px;
 }
 
 .file-download-button {
