@@ -17,7 +17,7 @@ $userStmt->execute();
 $userResult = $userStmt->get_result();
 $userResult = $userResult->fetch_all(MYSQLI_ASSOC);
 
-$feedBackstmt = $connection->prepare("SELECT feedbacks.feedback_id,feedbacks.title, feedbacks.comment, feedbacks.date, feedbacks.status,feedbacks.user_id,users.full_name,users.email  FROM feedbacks INNER JOIN users ON feedbacks.user_id=users.id");
+$feedBackstmt = $connection->prepare("SELECT feedbacks.feedback_id,feedbacks.title, feedbacks.comment, feedbacks.date, feedbacks.status,feedbacks.user_id,feedbacks.filePath,users.full_name,users.email  FROM feedbacks INNER JOIN users ON feedbacks.user_id=users.id");
 $feedBackstmt->execute();
 $feedbackResult = $feedBackstmt->get_result();
 $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
@@ -116,7 +116,17 @@ $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
 
             <div class="feedback_card">
                 <!-- Status Indicator -->
-                <div class="feedback_card_status_indicator"></div>
+                <?php
+                        if ($feedback['filePath'] == '') { ?>
+                <div class="feedback_card_status_indicator red-indicator">
+                    ❌
+                </div>
+                <?php } else { ?>
+                <div class="feedback_card_status_indicator green-indicator">
+                    ✅
+                </div>
+                <?php   }
+                        ?>
                 <div class="feedback_card_body_container">
                     <!-- Controls -->
                     <div class="feedback_card_controls_container">
