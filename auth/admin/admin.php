@@ -72,11 +72,11 @@ function loginUser($connection)
 
                     if ($status === false) {
                         showNotification("Error! Log in again.");
+                        exit("Unauthorized!");
                         return;
                     }
 
                     header("location:../../moderator/moderator_home.php");
-                    // exit;
                 } else {
 
                     echo "Minus";
