@@ -15,6 +15,12 @@ CREATE TABLE admin (
     attemptCount int NOT NULL DEFAULT 0
 );
 
+CREATE TABLE super_admin (
+    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email varchar(64) NOT NULL,
+    password varchar(255) NOT NULL,
+);
+
 CREATE TABLE feedbacks (
 feedback_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 title VARCHAR(120) NOT NULL,
