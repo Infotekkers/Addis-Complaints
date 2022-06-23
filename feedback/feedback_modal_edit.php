@@ -25,6 +25,8 @@ function showNotification($notificationMessage)
 
 function editComment($connection, $commentId)
 {
+    // check token
+
     $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
     $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
 
@@ -47,10 +49,10 @@ function editComment($connection, $commentId)
         showNotification("Invalid Email");
     }
 
-    // check title
-    // if (!preg_match($titlePattern, $titleInput)) {
-    //     showNotification("Invalid title");
-    // }
+    // check email
+    elseif (!preg_match($emailPattern, $emailInput)) {
+        showNotification("Invalid Email");
+    }
 
     // check comment
     // if (!preg_match($commentPattern, $commentInput)) {
@@ -59,8 +61,6 @@ function editComment($connection, $commentId)
 
     else {
         $uid  = $_SESSION['uid'];
-
-
         try {
             $fileToUpload = $_FILES['file'];
             $fileSize = $_FILES['file']['size'];
