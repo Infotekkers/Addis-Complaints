@@ -25,6 +25,7 @@ function showNotification($notificationMessage)
 
 function downloadFile($connection)
 {
+    global $base_url;
     try {
         $stmt = $connection->prepare("SELECT user_id,filePath FROM feedbacks WHERE feedback_id=?");
         $stmt->bind_param('i', $_SESSION['commentId']);
@@ -39,7 +40,7 @@ function downloadFile($connection)
                 if (str_contains($_SESSION['filePath'], "..", "../", "./", ".//", "..//",)) {
                     showNotification("Malicious Attempt!");
                     session_destroy();
-                    header("location:../auth/login/login.php");
+                    Redirect("$base_url/auth/login/login.php");
                     exit;
                 } else {
 
