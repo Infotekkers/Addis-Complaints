@@ -1,13 +1,16 @@
 <?php
 
 include "../config/db.php";
+include "../inc/redirect.php";
+$base_url = "http://localhost:3000";
+
 session_start();
 session_regenerate_id();
 $_SESSION['antiCSRFToken'] = bin2hex(random_bytes(35));
 
 
 if (!isset($_SESSION['uid'])) {
-    header("location:../auth/login/login.php");
+    Redirect("$base_url/auth/login/login.php");
     exit;
 }
 

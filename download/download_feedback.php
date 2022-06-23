@@ -1,11 +1,14 @@
 <?php
 
 include_once "../config/db.php";
+include "../inc/redirect.php";
 session_start();
 session_regenerate_id();
+$base_url = "http://localhost:3000";
+
 
 if (!isset($_SESSION['uid'])) {
-    header("location:../auth/login/login.php");
+    Redirect("$base_url/auth/login/login.php");
     exit;
 }
 

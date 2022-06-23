@@ -1,6 +1,9 @@
 <?php
 
 include "../config/db.php";
+include "../inc/redirect.php";
+$base_url = "http://localhost:3000";
+
 
 $show_notification_message = false;
 $notification_message_content = "";
@@ -23,7 +26,7 @@ $adminResult = $Infostmt->get_result();
 $adminResult = $adminResult->fetch_array(MYSQLI_ASSOC);
 
 if (!password_verify($adminResult['id'] . $adminResult['role'], $_SESSION['sessionHash'])) {
-    header("location:../dashboard/home.php");
+    Redirect("$base_url/dashboard/home.php");
     exit("Unauthorized!");
 }
 
