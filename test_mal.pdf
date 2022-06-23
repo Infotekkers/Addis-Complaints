@@ -50,9 +50,7 @@ if (!empty($result)) {
         <!-- Left -->
         <div class="dash_main_left_container">
 
-            <h1>Addis Ababa is our home</h1>
-            <h1>&</h1>
-            <h1>We take it seriously !!!</h1>
+            <h1>Addis Ababa is our home <br /> and We take it seriously!!!</h1>
 
             <p>
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Non vero dolorum quas minus, nemo repudiandae!

@@ -50,9 +50,7 @@ if (!empty($result)) {
         <!-- Left -->
         <div class="dash_main_left_container">
 
-            <h1>Addis Ababa is our home</h1>
-            <h1>&</h1>
-            <h1>We take it seriously !!!</h1>
+            <h1>Addis Ababa is our home <br /> and we take it <span>seriously!</span></h1>
 
             <p>
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Non vero dolorum quas minus, nemo repudiandae!
@@ -73,7 +71,7 @@ if (!empty($result)) {
                 <input type="text" name="title" value="" hidden>
                 <input type="text" name="comment" value="" hidden>
                 <img src="../assets/img/add-button-svgrepo-com.svg" alt="">
-                <input type="submit" value="Add New Feedback" class="add-feedback-button">
+                <input type="submit" value="Submit Feedback" class="add-feedback-button">
             </form>
         </div>
 
