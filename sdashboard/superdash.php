@@ -25,10 +25,10 @@ $Infostmt->execute();
 $adminResult = $Infostmt->get_result();
 $adminResult = $adminResult->fetch_array(MYSQLI_ASSOC);
 
-if (!password_verify($adminResult['id'] . $adminResult['role'], $_SESSION['sessionHash'])) {
-    Redirect("$base_url/dashboard/home.php");
-    exit("Unauthorized!");
-}
+// if (!password_verify($adminResult['id'] . $adminResult['role'], $_SESSION['sessionHash'])) {
+//     Redirect("$base_url/dashboard/home.php");
+//     exit("Unauthorized!");
+// }
 
 function registerSuperAdmin($connection)
 {
