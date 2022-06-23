@@ -59,14 +59,7 @@ function loginUser($connection)
                     header("location:../../sdashboard/superdash.php");
                     exit;
                 } else if ($result['password']) {
-
-                    // increase attempt count
-                    $newAttemptCount = $result['attemptCount'] + 1;
-                    $remainingAttempts = 5 - $newAttemptCount;
-                    $stmt = $connection->prepare("UPDATE users SET attemptCount=? WHERE email=?");
-                    $stmt->bind_param('is', $newAttemptCount, $emailInput);
-                    $stmt->execute();
-                    showNotification("Invalid email/password combination. " . $remainingAttempts . " tries remaining!");
+                    showNotification("Invalid email/password combination.");
                 }
             }
         }
