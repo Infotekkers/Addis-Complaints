@@ -20,10 +20,8 @@ function loginUser($connection)
 {
 
     try {
-        // $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_SPECIAL_CHARS);
-        // $passwordInput = filter_var($_POST['password'], FILTER_SANITIZE_EMAIL);
-        $emailInput = "adminone@gmail.com";
-        $passwordInput = "StrongPass@123";
+        $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_SPECIAL_CHARS);
+        $passwordInput = filter_var($_POST['password'], FILTER_SANITIZE_EMAIL);
         $session = filter_var($_POST['session'], FILTER_SANITIZE_SPECIAL_CHARS);
 
         $stmt = $connection->prepare("SELECT password FROM admin WHERE email=?");
@@ -53,19 +51,32 @@ function loginUser($connection)
                     echo "Login";
 
                     //   get user info and redirect
-                    $Infostmt = $connection->prepare("SELECT id,full_name,attemptCount FROM admin WHERE email=?");
+                    $Infostmt = $connection->prepare("SELECT id,full_name,attemptCount,role FROM admin WHERE email=?");
                     $Infostmt->bind_param('s', $emailInput);
                     $Infostmt->execute();
                     $newResult = $Infostmt->get_result();
                     $newResult = $newResult->fetch_array(MYSQLI_ASSOC);
+                    $sessionHash = password_hash($newResult['id'] . $newResult['role'], PASSWORD_BCRYPT);
 
                     $_SESSION['uid'] = $newResult['id'];
                     $_SESSION['name'] = $newResult['full_name'];
+                    // showNotification($result['full_name']);
+                    $_SESSION['sessionHash'] = $sessionHash;
 
+                    // create prepared statements
+                    $updateStmt = $connection->prepare("UPDATE admin SET sessionHash=? WHERE email=?");
+                    $updateStmt->bind_param("ss", $sessionHash, $emailInput);
+                    $status = $updateStmt->execute();
+                    $result = $stmt->get_result();
+                    // showNotification($_SESSION['sessionHash']);
 
+                    if ($status === false) {
+                        showNotification("Error! Log in again.");
+                        exit("Unauthorized!");
+                        return;
+                    }
 
                     header("location:../../moderator/moderator_home.php");
-                    // exit;
                 } else {
 
                     echo "Minus";
