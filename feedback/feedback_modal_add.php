@@ -3,7 +3,7 @@
 include_once "../config/db.php";
 session_start();
 session_regenerate_id();
-$_SESSION['antiCSRFToken'] = bin2hex(random_bytes(35));
+// $_SESSION['antiCSRFToken'] = bin2hex(random_bytes(35));
 
 if (!isset($_SESSION['uid'])) {
     header("location:../auth/login/login.php");
@@ -23,109 +23,109 @@ function showNotification($notificationMessage)
 function addNewComment($connection)
 {
 
-    $token = filter_input(INPUT_POST, 'antiCSRFToken', FILTER_SANITIZE_SPECIAL_CHARS);
+    // $token = filter_input(INPUT_POST, 'antiCSRFToken', FILTER_SANITIZE_SPECIAL_CHARS);
 
-    if (!$token || $token !== $_SESSION['antiCSRFToken']) {
-        showNotification("Malicious Attempt!");
-        session_destroy();
-        header("location:../auth/login/login.php");
-        exit;
-    } else {
-        $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
-        $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
+    // if (!$token || $token !== $_SESSION['antiCSRFToken']) {
+    // showNotification("Malicious Attempt!");
+    // session_destroy();
+    // header("location:../auth/login/login.php");
+    // exit;
 
-        $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-        $emailPattern = "/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/";
+    $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
+    $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
 
-        $titleInput = filter_var($_POST['title'], FILTER_SANITIZE_SPECIAL_CHARS);
-        $titlePattern = "/^[a-zA-Z0-9_.-]*$/";
+    $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $emailPattern = "/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/";
 
-        $commentInput = filter_var($_POST['comment'], FILTER_SANITIZE_SPECIAL_CHARS);
-        $commentPattern = "/^[a-zA-Z0-9_.-]*$/";
+    $titleInput = filter_var($_POST['title'], FILTER_SANITIZE_SPECIAL_CHARS);
+    $titlePattern = "/^[a-zA-Z0-9_.-]*$/";
 
-        // check full name
-        if (!preg_match($fullNamePattern, $fullNameInput) || strlen($fullNameInput) > 24) {
-            showNotification("Invalid Name");
-        }
+    $commentInput = filter_var($_POST['comment'], FILTER_SANITIZE_SPECIAL_CHARS);
+    $commentPattern = "/^[a-zA-Z0-9_.-]*$/";
 
-        // check email
-        elseif (!preg_match($emailPattern, $emailInput)) {
-            showNotification("Invalid Email");
-        }
+    // check full name
+    if (!preg_match($fullNamePattern, $fullNameInput) || strlen($fullNameInput) > 24) {
+        showNotification("Invalid Name");
+    }
 
-        // check title
-        // if (!preg_match($titlePattern, $titleInput)) {
-        //     showNotification("Invalid title");
-        // }
+    // check email
+    elseif (!preg_match($emailPattern, $emailInput)) {
+        showNotification("Invalid Email");
+    }
 
-        // check comment
-        // if (!preg_match($commentPattern, $commentInput)) {
-        //     showNotification("Invalid comment");
-        // } 
+    // check title
+    // if (!preg_match($titlePattern, $titleInput)) {
+    //     showNotification("Invalid title");
+    // }
 
-        else {
-            $uid  = $_SESSION['uid'];
+    // check comment
+    // if (!preg_match($commentPattern, $commentInput)) {
+    //     showNotification("Invalid comment");
+    // } 
+
+    else {
+        $uid  = $_SESSION['uid'];
 
 
-            try {
+        try {
 
-                // get file info
-                $fileToUpload = $_FILES['file'];
-                $fileSize = $_FILES['file']['size'];
-                $fileTempLocation = $_FILES['file']['tmp_name'];
-                $fileError = $_FILES['file']['error'];
-                $fileName = $_FILES['file']['name'];
-                $fileType = $_FILES['file']['type'];
-                $fileExtension = explode(".", $fileName);
-                $fileExtensionLwr = strtolower(end($fileExtension));
+            // get file info
+            $fileToUpload = $_FILES['file'];
+            $fileSize = $_FILES['file']['size'];
+            $fileTempLocation = $_FILES['file']['tmp_name'];
+            $fileError = $_FILES['file']['error'];
+            $fileName = $_FILES['file']['name'];
+            $fileType = $_FILES['file']['type'];
+            $fileExtension = explode(".", $fileName);
+            $fileExtensionLwr = strtolower(end($fileExtension));
 
-                $allowedFileExtensions = array("pdf");
+            $allowedFileExtensions = array("pdf");
 
-                // if no file is selected
-                if ($fileSize === 0 && $fileError !== 0) {
-                    $date = date_create()->format('Y-m-d H:i:s');
-                    $stmt = $connection->prepare("INSERT INTO feedbacks (feedback_id, user_id, title,comment,date,status,filePath) VALUES ('', ?, ?, ?, ? , '','')");
-                    $stmt->bind_param('isss', $uid, $titleInput, $_POST['comment'], $date);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                }
-                // if file selected
-                else {
-                    // if file is valid
-                    if (in_array($fileExtensionLwr, $allowedFileExtensions)) {
-                        // check file error
-                        if ($fileError === 0) {
-                            // check file size
-                            if ($fileSize < 25000000) {
-                                $newFileName = uniqid("", true) . "." . $fileExtensionLwr;
-                                $fileUploadRoot = "../uploads/" . $newFileName;
+            // if no file is selected
+            if ($fileSize === 0 && $fileError !== 0) {
+                $date = date_create()->format('Y-m-d H:i:s');
+                $stmt = $connection->prepare("INSERT INTO feedbacks (feedback_id, user_id, title,comment,date,status,filePath) VALUES ('', ?, ?, ?, ? , '','')");
+                $stmt->bind_param('isss', $uid, $titleInput, $_POST['comment'], $date);
+                $stmt->execute();
+                $result = $stmt->get_result();
+            }
+            // if file selected
+            else {
+                // if file is valid
+                if (in_array($fileExtensionLwr, $allowedFileExtensions)) {
+                    // check file error
+                    if ($fileError === 0) {
+                        // check file size
+                        if ($fileSize < 25000000) {
+                            $newFileName = uniqid("", true) . "." . $fileExtensionLwr;
+                            $fileUploadRoot = "../uploads/" . $newFileName;
 
-                                move_uploaded_file($fileTempLocation, $fileUploadRoot);
+                            move_uploaded_file($fileTempLocation, $fileUploadRoot);
 
-                                // save to db
-                                $date = date_create()->format('Y-m-d H:i:s');
-                                $stmt = $connection->prepare("INSERT INTO feedbacks (feedback_id, user_id, title,comment,date,status,filePath) VALUES ('', ?, ?, ?, ? , '',?)");
-                                $stmt->bind_param('issss', $uid, $titleInput, $_POST['comment'], $date, $newFileName);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                            } else {
-                                showNotification("File is too large.");
-                            }
+                            // save to db
+                            $date = date_create()->format('Y-m-d H:i:s');
+                            $stmt = $connection->prepare("INSERT INTO feedbacks (feedback_id, user_id, title,comment,date,status,filePath) VALUES ('', ?, ?, ?, ? , '',?)");
+                            $stmt->bind_param('issss', $uid, $titleInput, $_POST['comment'], $date, $newFileName);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
                         } else {
-                            showNotification("File error.Try another file.");
+                            showNotification("File is too large.");
                         }
                     } else {
-                        showNotification("Invalid File format.");
+                        showNotification("File error.Try another file.");
                     }
+                } else {
+                    showNotification("Invalid File format.");
                 }
-            } catch (Exception $e) {
-                showNotification("Something went wrong");
             }
-
-            // redirect to home
-            header("location:../dashboard/home.php");
+        } catch (Exception $e) {
+            showNotification("Something went wrong");
         }
+
+        // redirect to home
+        header("location:../dashboard/home.php");
     }
+    // }
 }
 
 if ($_POST) {

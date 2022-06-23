@@ -45,10 +45,10 @@ function loginUser($connection)
                     // if deactivated
 
                     //   get user info and redirect
-                    $stmt = $connection->prepare("SELECT id,full_name FROM admin WHERE email=?");
-                    $stmt->bind_param('s', $emailInput);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
+                    $Infostmt = $connection->prepare("SELECT id,full_name,attempt_count FROM admin WHERE email=?");
+                    $Infostmt->bind_param('s', $emailInput);
+                    $Infostmt->execute();
+                    $result = $Infostmt->get_result();
                     $result = $result->fetch_array(MYSQLI_ASSOC);
 
                     $_SESSION['uid'] = $result['id'];
