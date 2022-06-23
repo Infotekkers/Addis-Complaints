@@ -12,7 +12,9 @@ CREATE TABLE admin (
     full_name varchar(36) NOT NULL,
     email varchar(64) NOT NULL,
     password varchar(255) NOT NULL,
-    attemptCount int NOT NULL DEFAULT 0
+    attemptCount int NOT NULL DEFAULT 0,
+    role varchar(25) NOT NULL,
+    sessionHash varchar(255),
 );
 
 CREATE TABLE super_admin (
