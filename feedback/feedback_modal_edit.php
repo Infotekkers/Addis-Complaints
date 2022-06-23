@@ -45,11 +45,6 @@ function editComment($connection, $commentId)
     }
 
     // check email
-    if (!preg_match($emailPattern, $emailInput)) {
-        showNotification("Invalid Email");
-    }
-
-    // check email
     elseif (!preg_match($emailPattern, $emailInput)) {
         showNotification("Invalid Email");
     }
