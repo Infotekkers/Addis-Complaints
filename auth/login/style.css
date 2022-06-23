@@ -11,14 +11,15 @@
   height: 100vh;
 }
 .login_page_left_container {
-  width: 50%;
+  width: 30%;
   background-color: var(--primary-white);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 .login_page_right_container {
-  background: linear-gradient(to bottom, #5e166151, #862f8447),
+  flex-grow: 1;
+  background: linear-gradient(to bottom, transparent 40%, #2b022d87, #3506348b),
     url("../../assets/img/addis-ababa-2.jpg");
   display: flex;
   flex-direction: column;
@@ -54,21 +55,21 @@
   justify-content: center;
 }
 .login_page_form_container > h1 {
-  margin-bottom: 18px;
   font-weight: bold;
   font-family: var(--primary-font);
   color: rgba(0, 0, 0, 0.75);
-  font-size: 38px;
+  font-size: var(--text-xl);
   letter-spacing: 0.35px;
   text-transform: capitalize;
 }
 
 .login_page_form_container > p {
-  font-size: 14px;
+  font-size: var(--text-small);
   line-height: 1.5;
-  margin-bottom: 16px;
+  margin-top: var(--spacing-xsmall);
+  margin-bottom: var(--spacing-medium);
   font-family: var(--secondary-font);
-  color: rgba(0, 0, 0, 0.8);
+  color: var(--gray-700);
   font-weight: 400;
 }
 .login_page_form_container .input_container {
@@ -94,7 +95,7 @@ label {
 }
 
 .login_page_button {
-  margin-top: var(--spacing-large);
+  margin-top: var(--spacing-base);
   min-width: 150px;
   padding: var(--spacing-small) 0;
   border: none;
@@ -147,10 +148,11 @@ label {
 }
 
 .login_page_right_text > p {
-  font-size: 14px;
+  font-size: var(--text-base);
   font-family: var(--secondary-font);
   line-height: 1.5;
   letter-spacing: 0.1px;
+  width: 75ch;
 }
 
 /* Notification */
