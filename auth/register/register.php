@@ -1,6 +1,7 @@
 <?php
 
-include "../../config/db.php";
+include "../../config/db/user.php";
+include "../../config/constants.php";
 
 $show_notification_message = false;
 $notification_message_content = "";
@@ -13,7 +14,7 @@ function showNotification($notificationMessage)
     include '../../inc/notification.php';
 }
 
-function registerUser($connection)
+function registerUser($connection, $salt)
 {
     try {
         $fullNameInput = filter_var($_POST['fullName'], FILTER_SANITIZE_SPECIAL_CHARS);
@@ -88,7 +89,7 @@ if ($_POST) {
         $data = file_get_contents($url);
         $row = json_decode($data, true);
         if ($row['success'] == "true") {
-            registerUser($connection);
+            registerUser($connection, $salt);
         } else {
 
             showNotification("Captcha Failed");

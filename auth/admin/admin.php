@@ -1,7 +1,7 @@
 <?php
 
 
-include "../../config/db.php";
+include "../../config/db/admin.php";
 
 session_start();
 session_regenerate_id();
@@ -108,7 +108,6 @@ if ($_POST) {
         $data = file_get_contents($url);
         $row = json_decode($data, true);
         if ($row['success'] == "true") {
-
             loginUser($connection);
         } else {
             showNotification("Captcha Failed");

@@ -1,6 +1,6 @@
 <?php
 
-include "../config/db.php";
+include "../config/db/superadmin.php";
 
 $show_notification_message = false;
 $notification_message_content = "";

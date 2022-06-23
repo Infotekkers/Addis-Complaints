@@ -1,6 +1,6 @@
 <?php
 
-include "../config/db.php";
+include "../../config/db/admin.php";
 session_start();
 session_regenerate_id();
 
@@ -66,48 +66,48 @@ $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
 
             <?php
             if (empty($userResult)) { ?>
-                <div class="no-data-center-container">
-                    <h1 class="no-data-text-header">No Users Yet.</h1>
+            <div class="no-data-center-container">
+                <h1 class="no-data-text-header">No Users Yet.</h1>
+            </div>
+
+            <?php } else {
+                foreach ($userResult as $user) { ?>
+            <div class="user_card">
+                <div class="user_card_info">
+
+                    <!-- Name & Email -->
+                    <div class="user_card_text_info">
+                        <p><?php echo $user['full_name'] ?></p>
+
+                        <p><?php echo $user['email'] ?></p>
+
+
+                    </div>
+
+                    <!-- Account Status -->
+                    <div class="user_card_account_info">
+                        <?php echo $user['isActive'] ?>
+                        <?php echo $user['attemptCount'] ?>
+                    </div>
                 </div>
 
-                <?php } else {
-                foreach ($userResult as $user) { ?>
-                    <div class="user_card">
-                        <div class="user_card_info">
-
-                            <!-- Name & Email -->
-                            <div class="user_card_text_info">
-                                <p><?php echo $user['full_name'] ?></p>
-
-                                <p><?php echo $user['email'] ?></p>
-
-
-                            </div>
-
-                            <!-- Account Status -->
-                            <div class="user_card_account_info">
-                                <?php echo $user['isActive'] ?>
-                                <?php echo $user['attemptCount'] ?>
-                            </div>
-                        </div>
-
-                        <div class="user_card_controls">
-                            <form action="./reset_user.php" method="POST" autocomplete="off">
-                                <input type="text" name="userId" value="<?php echo $user['id'] ?>" hidden>
-                                <input type="number" value="1" name="status" hidden>
-                                <input type="submit" value="Activate">
-                            </form>
-                            <form action="./reset_user.php" method="POST" autocomplete="off">
-                                <input type="text" name="userId" value="<?php echo $user['id'] ?>" hidden>
-                                <input type="number" value="0" name="status" hidden>
-                                <input type="submit" value="Deactivate">
-                            </form>
-                            <form action="./reset_user.php" method="POST" autocomplete="off">
-                                <input type="text" name="userId" value="<?php echo $user['id'] ?>" hidden>
-                                <input type="submit" value="Reset">
-                            </form>
-                        </div>
-                    </div>
+                <div class="user_card_controls">
+                    <form action="./reset_user.php" method="POST" autocomplete="off">
+                        <input type="text" name="userId" value="<?php echo $user['id'] ?>" hidden>
+                        <input type="number" value="1" name="status" hidden>
+                        <input type="submit" value="Activate">
+                    </form>
+                    <form action="./reset_user.php" method="POST" autocomplete="off">
+                        <input type="text" name="userId" value="<?php echo $user['id'] ?>" hidden>
+                        <input type="number" value="0" name="status" hidden>
+                        <input type="submit" value="Deactivate">
+                    </form>
+                    <form action="./reset_user.php" method="POST" autocomplete="off">
+                        <input type="text" name="userId" value="<?php echo $user['id'] ?>" hidden>
+                        <input type="submit" value="Reset">
+                    </form>
+                </div>
+            </div>
 
             <?php }
             }
@@ -125,71 +125,71 @@ $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
             if (empty($feedbackResult)) {
             ?>
 
-                <div class="no-data-center-container">
-                    <h1 class="no-data-text-header">No Feedbacks Yet.</h1>
-                </div>
-                <?php } else {
+            <div class="no-data-center-container">
+                <h1 class="no-data-text-header">No Feedbacks Yet.</h1>
+            </div>
+            <?php } else {
 
                 foreach ($feedbackResult as $feedback) {  ?>
 
-                    <<<<<<< HEAD <div class="feedback_card">
-                        <!-- Status Indicator -->
-                        <div class="feedback_card_status_indicator"></div>
-                        <div class="feedback_card_body_container">
-                            <!-- Controls -->
-                            <div class="feedback_card_controls_container">
+            <<<<<<< HEAD <div class="feedback_card">
+                <!-- Status Indicator -->
+                <div class="feedback_card_status_indicator"></div>
+                <div class="feedback_card_body_container">
+                    <!-- Controls -->
+                    <div class="feedback_card_controls_container">
 
-                            </div>
+                    </div>
 
-                            <!-- title -->
-                            <div class="feedback_card_title">
-                                <?php echo $feedback['title'] ?></div>
+                    <!-- title -->
+                    <div class="feedback_card_title">
+                        <?php echo $feedback['title'] ?></div>
 
-                            <!-- body -->
-                            <div class="feedback_card_body">
-                                <?php echo $feedback['comment'] ?>
-                            </div>
+                    <!-- body -->
+                    <div class="feedback_card_body">
+                        <?php echo $feedback['comment'] ?>
+                    </div>
 
-                            <!-- user Info -->
-                            <div class="feedback_card_date">
-                                <p><?php echo $feedback['full_name'] ?></p>
-                                <p> <?php echo $feedback['email'] ?></p>
-                            </div>
+                    <!-- user Info -->
+                    <div class="feedback_card_date">
+                        <p><?php echo $feedback['full_name'] ?></p>
+                        <p> <?php echo $feedback['email'] ?></p>
+                    </div>
 
-                            <!-- more info -->
-                            <div class="feedback_card_date">
-                                <p>Pdf uploaded</p>
-                                <p> <?php echo $feedback['date'] ?></p>
-                            </div>
-                        </div>
-                        =======
-                        <div class="feedback_card">
-                            <!-- Status Indicator -->
-                            <?php
+                    <!-- more info -->
+                    <div class="feedback_card_date">
+                        <p>Pdf uploaded</p>
+                        <p> <?php echo $feedback['date'] ?></p>
+                    </div>
+                </div>
+                =======
+                <div class="feedback_card">
+                    <!-- Status Indicator -->
+                    <?php
                             if ($feedback['filePath'] == '') { ?>
-                                <div class="feedback_card_status_indicator red-indicator">
-                                    ❌
-                                </div>
-                            <?php } else { ?>
-                                <div class="feedback_card_status_indicator green-indicator">
-                                    ✅
-                                </div>
-                            <?php   }
+                    <div class="feedback_card_status_indicator red-indicator">
+                        ❌
+                    </div>
+                    <?php } else { ?>
+                    <div class="feedback_card_status_indicator green-indicator">
+                        ✅
+                    </div>
+                    <?php   }
                             ?>
-                            <div class="feedback_card_body_container">
-                                <!-- Controls -->
-                                <div class="feedback_card_controls_container">
-                                    >>>>>>> f0cd0124c576ddf69344e1beecadc6104efca7f5
+                    <div class="feedback_card_body_container">
+                        <!-- Controls -->
+                        <div class="feedback_card_controls_container">
+                            >>>>>>> f0cd0124c576ddf69344e1beecadc6104efca7f5
 
-                                </div>
+                        </div>
 
                         <?php }
                 }
                         ?>
-                            </div>
+                    </div>
 
 
-                        </div>
+                </div>
 </body>
 
 </html>

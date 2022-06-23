@@ -1,7 +1,7 @@
 <?php
 
 
-include "../config/db.php";
+include "../../config/db/admin.php";
 session_start();
 session_regenerate_id();
 

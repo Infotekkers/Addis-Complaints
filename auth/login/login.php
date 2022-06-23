@@ -1,5 +1,5 @@
 <?php
-include "../../config/db.php";
+include "../../config/db/user.php";
 session_start();
 session_regenerate_id();
 
