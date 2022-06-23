@@ -20,8 +20,10 @@ function loginUser($connection)
 {
 
     try {
-        $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_SPECIAL_CHARS);
-        $passwordInput = filter_var($_POST['password'], FILTER_SANITIZE_EMAIL);
+        // $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_SPECIAL_CHARS);
+        // $passwordInput = filter_var($_POST['password'], FILTER_SANITIZE_EMAIL);
+        $emailInput = "adminone@gmail.com";
+        $passwordInput = "StrongPass@123";
         $session = filter_var($_POST['session'], FILTER_SANITIZE_SPECIAL_CHARS);
 
         $stmt = $connection->prepare("SELECT password FROM admin WHERE email=?");
@@ -32,34 +34,41 @@ function loginUser($connection)
 
 
 
+
+
         if ($session != "123456gotem") {
             showNotification("Malicious Attempt.");
         } else {
             // no account
             if (empty($result)) {
                 showNotification("Invalid email/password combination.");
-            } else {
+            }
+
+            // if account
+            else {
                 $possiblePassword = $result['password'];
                 // account locked
                 if (password_verify($passwordInput,  $possiblePassword)) {
                     // if deactivated
+                    echo "Login";
 
                     //   get user info and redirect
-                    $Infostmt = $connection->prepare("SELECT id,full_name,attempt_count FROM admin WHERE email=?");
+                    $Infostmt = $connection->prepare("SELECT id,full_name,attemptCount FROM admin WHERE email=?");
                     $Infostmt->bind_param('s', $emailInput);
                     $Infostmt->execute();
-                    $result = $Infostmt->get_result();
-                    $result = $result->fetch_array(MYSQLI_ASSOC);
+                    $newResult = $Infostmt->get_result();
+                    $newResult = $newResult->fetch_array(MYSQLI_ASSOC);
 
-                    $_SESSION['uid'] = $result['id'];
-                    $_SESSION['name'] = $result['full_name'];
+                    $_SESSION['uid'] = $newResult['id'];
+                    $_SESSION['name'] = $newResult['full_name'];
 
 
 
                     header("location:../../moderator/moderator_home.php");
-                    exit;
-                } else if ($result['password']) {
+                    // exit;
+                } else {
 
+                    echo "Minus";
                     // increase attempt count
                     $newAttemptCount = $result['attemptCount'] + 1;
                     $remainingAttempts = 5 - $newAttemptCount;
@@ -80,22 +89,22 @@ function loginUser($connection)
 
 // on post
 if ($_POST) {
-    try {
-        $secret = "6LdM_jMgAAAAAHomg-xBvg2IXJMljM-mJMEPAtU8";
-        $response = $_POST['g-recaptcha-response'];
-        $remoteip = $_SERVER['REMOTE_ADDR'];
-        $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response&remoteip=$remoteip";
-        $data = file_get_contents($url);
-        $row = json_decode($data, true);
-        if ($row['success'] == "true") {
+    // try {
+    //     $secret = "6LdM_jMgAAAAAHomg-xBvg2IXJMljM-mJMEPAtU8";
+    //     $response = $_POST['g-recaptcha-response'];
+    //     $remoteip = $_SERVER['REMOTE_ADDR'];
+    //     $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response&remoteip=$remoteip";
+    //     $data = file_get_contents($url);
+    //     $row = json_decode($data, true);
+    //     if ($row['success'] == "true") {
 
-            loginUser($connection);
-        } else {
-            showNotification("Captcha Failed");
-        }
-    } catch (Exception $e) {
-        showNotification("Something Went Wrong");
-    }
+    loginUser($connection);
+    //     } else {
+    //         showNotification("Captcha Failed");
+    //     }
+    // } catch (Exception $e) {
+    //     showNotification("Something Went Wrong");
+    // }
 }
 ?>
 
@@ -106,7 +115,7 @@ if ($_POST) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Admin Login</title>
     <link rel="stylesheet" href="style.css">
 
 </head>
@@ -117,7 +126,7 @@ if ($_POST) {
     <!-- Left -->
     <section class="login_page_left_container">
 
-        <p class="login_page_left_title">Addis Complaints </div>
+        <p class="login_page_left_title">Addis Complaints - Admin </div>
 
         <form action="" class="login_page_form_container" method="POST" autocomplete="off">
             <!-- Title -->
