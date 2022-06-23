@@ -110,7 +110,9 @@
 .feedback_card_status_indicator {
   width: 70px;
   height: 70px;
-  background-color: red;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
   border-radius: 50%;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
@@ -197,4 +199,38 @@
   font-family: var(--primary-font);
   color: rgba(255, 255, 255, 0.85);
   letter-spacing: 0.5px;
+}
+
+.edit-form-button,
+.delete-form-button {
+  border: none;
+  font-size: 12px;
+  width: 44px;
+  padding: 2px 4px;
+}
+.edit-form-button {
+  background-color: greenyellow;
+}
+.delete-form-button {
+  background-color: red;
+}
+.red-indicator {
+  border: 3px solid red;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+.green-indicator {
+  /* background: yellowgreen; */
+  border: 3px solid yellowgreen;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+.spacer {
+  width: 10px;
 }

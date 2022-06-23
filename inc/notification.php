@@ -17,3 +17,9 @@
 
 }
 </style>
+
+<script>
+setTimeout(() => {
+    document.getElementById("global_notification_container").style.display = "none"
+}, 3000);
+</script>

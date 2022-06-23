@@ -12,7 +12,7 @@ if (!isset($_SESSION['uid'])) {
 
 
 $userId = $_SESSION['uid'];
-$stmt = $connection->prepare("SELECT feedbacks.feedback_id,feedbacks.title, feedbacks.comment, feedbacks.date, feedbacks.status,feedbacks.user_id,users.full_name,users.email  FROM feedbacks INNER JOIN users ON feedbacks.user_id=users.id  WHERE user_id =?");
+$stmt = $connection->prepare("SELECT feedbacks.feedback_id,feedbacks.title, feedbacks.comment, feedbacks.date, feedbacks.status,feedbacks.user_id,feedbacks.filePath,users.full_name,users.email  FROM feedbacks INNER JOIN users ON feedbacks.user_id=users.id  WHERE user_id =?");
 $stmt->bind_param('s', $userId);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -66,6 +66,7 @@ if (!empty($result)) {
                 id="open-modal">
 
                 <input type="text" name="full_name" value="" hidden>
+                <input type="text" name="isSubmit" value="0" hidden>
                 <input type="text" name="email" value="" hidden>
                 <input type="text" name="title" value="" hidden>
                 <input type="text" name="comment" value="" hidden>
@@ -86,19 +87,31 @@ if (!empty($result)) {
             <?php } else {
                 foreach ($result as $complaint) { ?>
             <div class="feedback_card">
-                <!-- Status Indicator -->
-                <div class="feedback_card_status_indicator"></div>
+
+
+                <?php
+                        if ($complaint['filePath'] == '') { ?>
+                <div class="feedback_card_status_indicator red-indicator">
+                    ❌
+                </div>
+                <?php } else { ?>
+                <div class="feedback_card_status_indicator green-indicator">
+                    ✅
+                </div>
+                <?php   }
+                        ?>
+
                 <div class="feedback_card_body_container">
                     <!-- Controls -->
                     <div class="feedback_card_controls_container">
-                        <!-- edit -->
-                        <div class="edit-control" id="edit-control">
-                            <img src="../assets//icons/edit-button-svgrepo-com.svg" alt="">
-                        </div>
 
-                        <!-- delete -->
+
+                        <!-- edit -->
                         <form action="../feedback/feedback_modal_edit.php" method="GET">
 
+                            <input type="text" name="filePath"
+                                value="<?php echo filter_var($complaint['filePath'], FILTER_SANITIZE_SPECIAL_CHARS) ?>"
+                                hidden>
                             <input type="text" name="title"
                                 value="<?php echo filter_var($complaint['title'], FILTER_SANITIZE_SPECIAL_CHARS) ?>"
                                 hidden>
@@ -115,7 +128,24 @@ if (!empty($result)) {
                             <input type="text" name="email"
                                 value="<?php echo filter_var($complaint['email'], FILTER_SANITIZE_EMAIL) ?>" hidden>
 
-                            <input type="submit" value="Edit">
+                            <input type="submit" value="Edit" class="edit-form-button">
+                        </form>
+
+                        <div class="spacer"></div>
+
+                        <!-- delete -->
+                        <form action="../feedback/delete_feedback.php" method="POST">
+
+
+                            <input type="text" name="title"
+                                value="<?php echo filter_var($complaint['title'], FILTER_SANITIZE_SPECIAL_CHARS) ?>"
+                                hidden>
+
+                            <input type="text" name="commentId"
+                                value="<?php echo filter_var($complaint['feedback_id'], FILTER_SANITIZE_SPECIAL_CHARS) ?>"
+                                hidden>
+
+                            <input type="submit" value="Delete" class="delete-form-button">
                         </form>
                     </div>
 

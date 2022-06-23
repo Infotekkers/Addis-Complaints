@@ -60,14 +60,51 @@ function editComment($connection, $commentId)
 
 
         try {
-            $editStmt = $connection->prepare("UPDATE feedbacks SET title=?,comment=? WHERE feedback_id=?");
-            $editStmt->bind_param('ssi',  $titleInput, $commentInput, $commentId);
-            $editStmt->execute();
-            $result = $editStmt->get_result();
+            $fileToUpload = $_FILES['file'];
+            $fileSize = $_FILES['file']['size'];
+            $fileTempLocation = $_FILES['file']['tmp_name'];
+            $fileError = $_FILES['file']['error'];
+            $fileName = $_FILES['file']['name'];
+            $fileType = $_FILES['file']['type'];
+            $fileExtension = explode(".", $fileName);
+            $fileExtensionLwr = strtolower(end($fileExtension));
+
+
+            $allowedFileExtensions = array("pdf");
+            print_r($fileToUpload);
+
+            // if no file is selected
+            if ($fileSize === 0 && $fileError !== 0) {
+                $editStmt = $connection->prepare("UPDATE feedbacks SET title=?,comment=? WHERE feedback_id=?");
+                $editStmt->bind_param('ssi',  $titleInput, $commentInput, $commentId);
+                $editStmt->execute();
+                $result = $editStmt->get_result();
+            } else {
+                if (in_array($fileExtensionLwr, $allowedFileExtensions)) {
+                    if ($fileError === 0) {
+                        if ($fileSize < 25000000) {
+                            $newFileName = uniqid("", true) . "." . $fileExtensionLwr;
+                            $fileUploadRoot = "../uploads/" . $newFileName;
+                            move_uploaded_file($fileTempLocation, $fileUploadRoot);
+
+
+                            $editStmt = $connection->prepare("UPDATE feedbacks SET title=?,comment=?,filePath=? WHERE feedback_id=?");
+                            $editStmt->bind_param('sssi',  $titleInput, $commentInput, $newFileName, $commentId,);
+                            $editStmt->execute();
+                            $result = $editStmt->get_result();
+                        } else {
+                            showNotification("File is too large.");
+                        }
+                    } else {
+                        showNotification("File error.Try another file.");
+                    }
+                } else {
+                    showNotification("Invalid File format.");
+                }
+            }
         } catch (Exception $e) {
             showNotification("Something went wrong");
         }
-
 
         // redirect to home
         header("location:../dashboard/home.php");
@@ -81,6 +118,7 @@ if ($_GET) {
     $title = filter_var($_GET['title'], FILTER_SANITIZE_SPECIAL_CHARS);
     $comment = filter_var($_GET['comment'], FILTER_SANITIZE_SPECIAL_CHARS);
     $commentId = filter_var($_GET['commentId'], FILTER_SANITIZE_SPECIAL_CHARS);
+    $filePath = filter_var($_GET['filePath'], FILTER_SANITIZE_SPECIAL_CHARS);
 } else if ($_POST) {
     editComment($connection, $_POST['commentId']);
 }
@@ -106,10 +144,19 @@ if ($_GET) {
     <section class="feedback_modal" id="feedback-modal">
 
 
-        <form class="feedback_modal_form_container" action="./feedback_modal_edit.php" method="POST">
+        <form class="feedback_modal_form_container" action="./feedback_modal_edit.php" method="POST"
+            enctype="multipart/form-data">
 
             <div class="feedback_modal_file_upload_container">
-                File Upload
+                <input type="file" name="file">
+
+                <?php
+                if ($filePath !== '') { ?>
+                <a href="<?php echo (isset($filePath)) ? "../uploads/" . $filePath : ''; ?>" download
+                    class="file-download-button">Download</a>
+                <?php }
+                ?>
+
             </div>
 
             <div class="feedback_modal_form">
