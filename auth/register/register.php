@@ -144,15 +144,27 @@ if ($_POST) {
                 </div>
 
                 <!-- Password -->
-                <div class="input_container">
+                <div class="input_container password_input">
                     <label for="password">Password : </label>
                     <input type="password" name="password" required>
+
+                    <svg id="Icon_view_solid" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <g id="Icon_view_solid-2" data-name="Icon_view_solid" transform="translate(2 5)">
+                            <path id="Shape" d="M10,14a11.408,11.408,0,0,1-4.3-.793A9.772,9.772,0,0,1,2.7,11.3,9.574,9.574,0,0,1,0,7C.576,4.579,3.408,0,10,0s9.424,4.579,10,7a8.833,8.833,0,0,1-2.708,4.448A9.526,9.526,0,0,1,14.3,13.262,12.058,12.058,0,0,1,10,14ZM10,3a4,4,0,1,0,4,4c0-.08,0-.166-.009-.263a2,2,0,0,1-2.011-.016A2.053,2.053,0,0,1,12,7a2,2,0,1,1-.98-1.722A2.051,2.051,0,0,1,11,5a1.987,1.987,0,0,1,.779-1.584A3.958,3.958,0,0,0,10,3Z" />
+                        </g>
+                    </svg>
                 </div>
 
                 <!-- Confirm Password -->
-                <div class="input_container">
+                <div class="input_container confirm_password_input">
                     <label for="confirm-password">Confirm Password : </label>
                     <input type="password" name="confirmPassword" required>
+
+                    <svg id="Icon_view_solid_confirm" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <g id="Icon_view_solid-2" data-name="Icon_view_solid" transform="translate(2 5)">
+                            <path id="Shape" d="M10,14a11.408,11.408,0,0,1-4.3-.793A9.772,9.772,0,0,1,2.7,11.3,9.574,9.574,0,0,1,0,7C.576,4.579,3.408,0,10,0s9.424,4.579,10,7a8.833,8.833,0,0,1-2.708,4.448A9.526,9.526,0,0,1,14.3,13.262,12.058,12.058,0,0,1,10,14ZM10,3a4,4,0,1,0,4,4c0-.08,0-.166-.009-.263a2,2,0,0,1-2.011-.016A2.053,2.053,0,0,1,12,7a2,2,0,1,1-.98-1.722A2.051,2.051,0,0,1,11,5a1.987,1.987,0,0,1,.779-1.584A3.958,3.958,0,0,0,10,3Z" />
+                        </g>
+                    </svg>
                 </div>
 
                 <!-- Captcha -->
@@ -190,5 +202,19 @@ if ($_POST) {
 
 <!-- Google Captcha v2 -->
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script>
+    const password_input = document.querySelector("input[name='password']");
+    const showOrHide = document.querySelector("#Icon_view_solid");
+
+    const confirm_password = document.querySelector("input[name='confirmPassword']");
+    const showOrHideConfirm = document.querySelector("#Icon_view_solid_confirm");
+
+    showOrHide.addEventListener("click", () => handleClick(password_input));
+    showOrHideConfirm.addEventListener("click", () => handleClick(confirm_password))
+
+    function handleClick(input) {
+        input.type = input.type === "password" ? "text" : "password";
+    }
+</script>
 
 </html>

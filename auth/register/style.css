@@ -154,3 +154,17 @@ label {
   letter-spacing: 0.1px;
   width: 75ch;
 }
+
+.password_input,
+.confirm_password_input {
+  position: relative;
+}
+
+.password_input svg,
+.confirm_password_input svg {
+  position: absolute;
+  top: 50%;
+  right: var(--spacing-small);
+  background: transparent;
+  cursor: pointer;
+}
