@@ -112,7 +112,7 @@ if ($_POST) {
 
             loginUser($connection);
         } else {
-            showNotification("Captcha Failed");
+            showNotification("Captcha failed");
         }
     } catch (Exception $e) {
         showNotification("Something Went Wrong");
@@ -138,7 +138,7 @@ if ($_POST) {
     <!-- Left -->
     <section class="login_page_left_container">
 
-        <p class="login_page_left_title">Addis Complaints </div>
+        <p class="login_page_left_title">Addis Complaints</div>
 
         <form action="" class="login_page_form_container" method="POST" autocomplete="off">
             <!-- Title -->

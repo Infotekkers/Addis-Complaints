@@ -129,7 +129,7 @@ if ($_GET) {
         editComment($connection, $_POST['commentId']);
     } else {
         // header("Refresh:0");
-        showNotification("Captcha Failed");
+        showNotification("Captcha failed");
     }
 }
 

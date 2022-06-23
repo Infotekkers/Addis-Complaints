@@ -111,7 +111,7 @@ if ($_POST) {
 
             loginUser($connection);
         } else {
-            showNotification("Captcha Failed");
+            showNotification("Captcha failed");
         }
     } catch (Exception $e) {
         showNotification("Something Went Wrong");

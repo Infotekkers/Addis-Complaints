@@ -160,7 +160,7 @@ if ($_POST) {
             if ($row['success'] == "true") {
                 addNewComment($connection);
             } else {
-                showNotification("Captcha Failed");
+                showNotification("Captcha failed");
             }
         }
     } catch (Exception $e) {
