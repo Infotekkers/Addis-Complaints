@@ -3,6 +3,7 @@
 include "../config/db.php";
 session_start();
 session_regenerate_id();
+$_SESSION['antiCSRFToken'] = bin2hex(random_bytes(35));
 
 if (!isset($_SESSION['uid'])) {
     header("location:../auth/login/login.php");
@@ -24,100 +25,91 @@ function showNotification($notificationMessage)
 
 function editComment($connection, $commentId)
 {
+    $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
+    $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
 
-    // check token
-    $token = filter_input(INPUT_POST, 'antiCSRFToken', FILTER_SANITIZE_SPECIAL_CHARS);
-    if (!$token || $token !== $_SESSION['antiCSRFToken']) {
-        showNotification("Malicious Attempt!");
-        session_destroy();
-        header("location:../auth/login/login.php");
-    } else {
-        $fullNameInput = filter_var($_POST['full_name'], FILTER_SANITIZE_SPECIAL_CHARS);
-        $fullNamePattern = "/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/";
+    $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $emailPattern = "/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/";
 
-        $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-        $emailPattern = "/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/";
+    $titleInput = filter_var($_POST['title'], FILTER_SANITIZE_SPECIAL_CHARS);
+    $titlePattern = "/^[a-zA-Z0-9_.-]*$/";
 
-        $titleInput = filter_var($_POST['title'], FILTER_SANITIZE_SPECIAL_CHARS);
-        $titlePattern = "/^[a-zA-Z0-9_.-]*$/";
+    $commentInput = filter_var($_POST['comment'], FILTER_SANITIZE_SPECIAL_CHARS);
+    $commentPattern = "/^[a-zA-Z0-9_.-]*$/";
 
-        $commentInput = filter_var($_POST['comment'], FILTER_SANITIZE_SPECIAL_CHARS);
-        $commentPattern = "/^[a-zA-Z0-9_.-]*$/";
+    // check full name
+    if (!preg_match($fullNamePattern, $fullNameInput) || strlen($fullNameInput) > 24) {
+        showNotification("Invalid Name");
+    }
 
-        // check full name
-        if (!preg_match($fullNamePattern, $fullNameInput) || strlen($fullNameInput) > 24) {
-            showNotification("Invalid Name");
-        }
+    // check email
+    if (!preg_match($emailPattern, $emailInput)) {
+        showNotification("Invalid Email");
+    }
 
-        // check email
-        if (!preg_match($emailPattern, $emailInput)) {
-            showNotification("Invalid Email");
-        }
+    // check title
+    // if (!preg_match($titlePattern, $titleInput)) {
+    //     showNotification("Invalid title");
+    // }
 
-        // check title
-        // if (!preg_match($titlePattern, $titleInput)) {
-        //     showNotification("Invalid title");
-        // }
+    // check comment
+    // if (!preg_match($commentPattern, $commentInput)) {
+    //     showNotification("Invalid comment");
+    // } 
 
-        // check comment
-        // if (!preg_match($commentPattern, $commentInput)) {
-        //     showNotification("Invalid comment");
-        // } 
-
-        else {
-            $uid  = $_SESSION['uid'];
+    else {
+        $uid  = $_SESSION['uid'];
 
 
-            try {
-                $fileToUpload = $_FILES['file'];
-                $fileSize = $_FILES['file']['size'];
-                $fileTempLocation = $_FILES['file']['tmp_name'];
-                $fileError = $_FILES['file']['error'];
-                $fileName = $_FILES['file']['name'];
-                $fileType = $_FILES['file']['type'];
-                $fileExtension = explode(".", $fileName);
-                $fileExtensionLwr = strtolower(end($fileExtension));
+        try {
+            $fileToUpload = $_FILES['file'];
+            $fileSize = $_FILES['file']['size'];
+            $fileTempLocation = $_FILES['file']['tmp_name'];
+            $fileError = $_FILES['file']['error'];
+            $fileName = $_FILES['file']['name'];
+            $fileType = $_FILES['file']['type'];
+            $fileExtension = explode(".", $fileName);
+            $fileExtensionLwr = strtolower(end($fileExtension));
 
 
-                $allowedFileExtensions = array("pdf");
-                print_r($fileToUpload);
-
-                // if no file is selected
-                if ($fileSize === 0 && $fileError !== 0) {
-                    $editStmt = $connection->prepare("UPDATE feedbacks SET title=?,comment=? WHERE feedback_id=?");
-                    $editStmt->bind_param('ssi',  $titleInput, $commentInput, $commentId);
-                    $editStmt->execute();
-                    $result = $editStmt->get_result();
-                } else {
-                    if (in_array($fileExtensionLwr, $allowedFileExtensions)) {
-                        if ($fileError === 0) {
-                            if ($fileSize < 25000) {
-                                $newFileName = uniqid("", true) . "." . $fileExtensionLwr;
-                                $fileUploadRoot = "../uploads/" . $newFileName;
-                                move_uploaded_file($fileTempLocation, $fileUploadRoot);
+            $allowedFileExtensions = array("pdf");
 
 
-                                $editStmt = $connection->prepare("UPDATE feedbacks SET title=?,comment=?,filePath=? WHERE feedback_id=?");
-                                $editStmt->bind_param('sssi',  $titleInput, $commentInput, $newFileName, $commentId,);
-                                $editStmt->execute();
-                                $result = $editStmt->get_result();
-                            } else {
-                                showNotification("File is too large.");
-                            }
+            // if no file is selected
+            if ($fileSize === 0 && $fileError !== 0) {
+                $editStmt = $connection->prepare("UPDATE feedbacks SET title=?,comment=? WHERE feedback_id=?");
+                $editStmt->bind_param('ssi',  $titleInput, $commentInput, $commentId);
+                $editStmt->execute();
+                $result = $editStmt->get_result();
+            } else {
+                if (in_array($fileExtensionLwr, $allowedFileExtensions)) {
+                    if ($fileError === 0) {
+                        if ($fileSize < 25000000) {
+                            $newFileName = uniqid("", true) . "." . $fileExtensionLwr;
+                            $fileUploadRoot = "../uploads/" . $newFileName;
+                            move_uploaded_file($fileTempLocation, $fileUploadRoot);
+
+
+                            $editStmt = $connection->prepare("UPDATE feedbacks SET title=?,comment=?,filePath=? WHERE feedback_id=?");
+                            $editStmt->bind_param('sssi',  $titleInput, $commentInput, $newFileName, $commentId,);
+                            $editStmt->execute();
+                            $result = $editStmt->get_result();
                         } else {
-                            showNotification("File error.Try another file.");
+                            showNotification("File is too large.");
                         }
                     } else {
-                        showNotification("Invalid File format.");
+                        showNotification("File error.Try another file.");
                     }
+                } else {
+                    showNotification("Invalid File format.");
                 }
-            } catch (Exception $e) {
-                showNotification("Something went wrong");
             }
-
-            // redirect to home
-            header("location:../dashboard/home.php");
+        } catch (Exception $e) {
+            showNotification("Something went wrong");
         }
+
+        // redirect to home
+        header("location:../dashboard/home.php");
     }
 }
 
@@ -174,9 +166,11 @@ if ($_GET) {
                 <input type="file" name="file">
 
                 <?php
-                if ($filePath !== '') { ?>
-                <a href="<?php echo (isset($filePath)) ? "../uploads/" . $filePath : ''; ?>" download
-                    class="file-download-button">Download</a>
+                if ($filePath !== '') {
+                    $_SESSION['filePath'] = $filePath;
+                    $_SESSION['commentId'] = $commentId
+                ?>
+                <a href="../download/download_feedback.php" class="file-download-button">Download</a>
                 <?php }
                 ?>
 
