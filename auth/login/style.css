@@ -162,3 +162,15 @@ label {
   right: 0;
   top: 40px;
 }
+
+.password_input {
+  position: relative;
+}
+
+.password_input svg {
+  position: absolute;
+  top: 50%;
+  right: var(--spacing-small);
+  background: transparent;
+  cursor: pointer;
+}
