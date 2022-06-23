@@ -6,6 +6,7 @@ session_regenerate_id();
 
 if (!isset($_SESSION['uid'])) {
     header("location:../auth/login/login.php");
+    exit("Unauthenticated!");
 }
 
 $show_notification_message = false;
@@ -33,6 +34,7 @@ function deleteComment($connection)
             showNotification("Malicious Attempt!");
             session_destroy();
             header("location:../auth/login/login.php");
+            exit("Wasted!");
         } else {
             // get comment
             $stmt = $connection->prepare("SELECT user_id FROM feedbacks WHERE feedback_id=?");
@@ -57,6 +59,7 @@ function deleteComment($connection)
                 } else {
                     header("location:../auth/login/login.php");
                     showNotification("Malicious Attempt!");
+                    exit("Wasted!");
                 }
             } else {
                 showNotification("Something Went Wrong");
