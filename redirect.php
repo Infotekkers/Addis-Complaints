@@ -8,6 +8,6 @@
     header('Location: ' .$url, true, $statusCode);
     die();
     }
-    die();
+    
 } 
 ?>
