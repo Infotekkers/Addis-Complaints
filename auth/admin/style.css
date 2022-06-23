@@ -11,15 +11,15 @@
   height: 100vh;
 }
 .login_page_left_container {
-  width: 45%;
+  width: 30%;
   background-color: var(--primary-white);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 .login_page_right_container {
-  width: 55%;
-  background: linear-gradient(to bottom, #2b022d87, #3506348b),
+  flex-grow: 1;
+  background: linear-gradient(to bottom, transparent 40%, #2b022d87, #3506348b),
     url("../../assets/img/addis-ababa-2.jpg");
   display: flex;
   flex-direction: column;
@@ -37,7 +37,7 @@
   background-color: var(--secondary-white);
   display: flex;
   align-items: center;
-  padding: 0 10px;
+  padding: 0 var(--spacing-medium);
   border-bottom: 1px solid rgba(0, 0, 0, 0.114);
   font-family: var(--tertiary-font);
   font-size: 24px;
@@ -49,74 +49,72 @@
 .login_page_form_container {
   height: calc(100% - 40px);
   width: 100%;
-  padding: 12px 20% 12px 5%;
+  padding: var(--spacing-small) var(--spacing-medium);
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 .login_page_form_container > h1 {
-  margin-bottom: 18px;
   font-weight: bold;
   font-family: var(--primary-font);
   color: rgba(0, 0, 0, 0.75);
-  font-size: 38px;
+  font-size: var(--text-xl);
   letter-spacing: 0.35px;
   text-transform: capitalize;
 }
 
 .login_page_form_container > p {
-  font-size: 14px;
+  font-size: var(--text-small);
   line-height: 1.5;
-  margin-bottom: 16px;
+  margin-top: var(--spacing-xsmall);
+  margin-bottom: var(--spacing-medium);
   font-family: var(--secondary-font);
-  color: rgba(0, 0, 0, 0.8);
+  color: var(--gray-700);
   font-weight: 400;
 }
 .login_page_form_container .input_container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 18px;
+  flex-direction: column;
+  margin-bottom: var(--spacing-base);
 }
 .input_container > input[type="text"],
 .input_container > input[type="password"] {
-  background-color: transparent;
-  border: 1.58px solid var(--primary-purple);
-  width: 50%;
-  height: 25px;
   outline: none;
-  padding: 1px 5px;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
+  width: 100%;
+  padding: var(--spacing-small);
+  border-radius: 2px;
+  border: none;
+  background: var(--gray-200);
 }
 
 label {
   line-height: 1.5;
-  margin-bottom: 16px;
   font-size: 14px;
   font-family: var(--secondary-font);
   color: rgba(0, 0, 0, 0.8);
 }
 
 .login_page_button {
-  margin-top: 36px;
-  margin-left: calc(100% - 150px);
-  width: 150px;
-  height: 30px;
+  margin-top: var(--spacing-base);
+  min-width: 150px;
+  padding: var(--spacing-small) 0;
   border: none;
-  background-color: var(--primary-purple);
-  color: rgba(255, 255, 255, 0.9);
+  background: #ffff00;
+  cursor: pointer;
+  color: var(--gray-700);
   font-family: var(--primary-font);
+  font-size: var(--text-base);
   letter-spacing: 0.15px;
-  font-weight: 500;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
+  font-weight: 900;
+  border-radius: 2px;
+  margin-left: auto;
+  display: block;
+
+  transition: border-radius 300ms;
+}
+
+.login_page_button:hover {
+  border-radius: 50px;
 }
 
 .login_page_redirect {
@@ -124,7 +122,7 @@ label {
   text-align: center;
   font-size: 14px;
   font-family: var(--secondary-font);
-  color: rgba(0, 0, 0, 0.8);
+  color: var(--gray-700);
 }
 .login_page_redirect > a {
   text-decoration: none;
@@ -150,10 +148,11 @@ label {
 }
 
 .login_page_right_text > p {
-  font-size: 14px;
+  font-size: var(--text-base);
   font-family: var(--secondary-font);
   line-height: 1.5;
   letter-spacing: 0.1px;
+  width: 75ch;
 }
 
 /* Notification */
@@ -164,4 +163,16 @@ label {
   position: absolute;
   right: 0;
   top: 40px;
+}
+
+.password_input {
+  position: relative;
+}
+
+.password_input svg {
+  position: absolute;
+  top: 50%;
+  right: var(--spacing-small);
+  background: transparent;
+  cursor: pointer;
 }
