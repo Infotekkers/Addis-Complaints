@@ -1,10 +1,12 @@
 <?php
 include "../../config/db.php";
+include "../../inc/redirect.php";
+$base_url = "http://localhost:3000";
 session_start();
 session_regenerate_id();
 
 if (isset($_SESSION['uid'])) {
-    header("location:../../dashboard/home.php");
+    Redirect("$base_url/dashboard/home.php");
     exit;
 }
 
@@ -20,6 +22,7 @@ function showNotification($notificationMessage)
 
 function loginUser($connection)
 {
+    global $base_url;
 
     try {
         $emailInput = filter_var($_POST['email'], FILTER_SANITIZE_SPECIAL_CHARS);
@@ -76,7 +79,7 @@ function loginUser($connection)
                         $stmt->bind_param('s', $emailInput);
                         $stmt->execute();
 
-                        header("location:../../dashboard/home.php");
+                        Redirect("$base_url/dashboard/home.php");
                         exit;
                     }
                 } else if ($result['password']) {

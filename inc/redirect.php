@@ -3,7 +3,7 @@
 
     if (!preg_match($urlPattern,$url)){
      showNotification("erroneous url!!");
-     die();
+     die("erroneous url!!");
     }else{
     header('Location: ' .$url, true, $statusCode);
     die();
