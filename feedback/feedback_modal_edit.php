@@ -122,7 +122,6 @@ if ($_GET) {
     $commentId = filter_var($_GET['commentId'], FILTER_SANITIZE_SPECIAL_CHARS);
     $filePath = filter_var($_GET['filePath'], FILTER_SANITIZE_SPECIAL_CHARS);
 } else if ($_POST) {
-    editComment($connection, $_POST['commentId']);
 
     $secret = "6LdM_jMgAAAAAHomg-xBvg2IXJMljM-mJMEPAtU8";
     $response = $_POST['g-recaptcha-response'];
@@ -161,6 +160,8 @@ if ($_GET) {
 
         <form class="feedback_modal_form_container" action="./feedback_modal_edit.php" method="POST"
             enctype="multipart/form-data">
+
+            <input type="text" name="antiCSRFToken" value="<?= $_SESSION['antiCSRFToken'] ?? '' ?>" hidden>
 
             <div class="feedback_modal_file_upload_container">
                 <input type="file" name="file">
@@ -219,7 +220,7 @@ if ($_GET) {
                         required><?php echo (isset($comment)) ? $comment : ''; ?></textarea>
                 </div>
 
-                <div>Hey</div>
+
                 <!-- captcha -->
                 <div class="captcha_container">
                     <div class="g-recaptcha" data-sitekey="6LdM_jMgAAAAAC7VXyp8sdSNulMdZa8s68zNDsWE"></div>

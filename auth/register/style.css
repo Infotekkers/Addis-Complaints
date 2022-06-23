@@ -78,7 +78,8 @@
   align-items: center;
   margin-top: 18px;
 }
-.input_container > input[type="text"] {
+.input_container > input[type="text"],
+.input_container > input[type="password"] {
   background-color: transparent;
   border: 1.58px solid var(--primary-purple);
   width: 50%;

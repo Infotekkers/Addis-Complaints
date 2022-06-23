@@ -109,10 +109,6 @@ if (!empty($result)) {
 
                         <!-- edit -->
                         <form action="../feedback/feedback_modal_edit.php" method="GET" autocomplete="off">
-
-                            <input type="text" name="antiCSRFToken" value="<?= $_SESSION['antiCSRFToken'] ?? '' ?>"
-                                hidden>
-
                             <input type="text" name="filePath"
                                 value="<?php echo filter_var($complaint['filePath'], FILTER_SANITIZE_SPECIAL_CHARS) ?>"
                                 hidden>

@@ -142,7 +142,7 @@ if ($_POST) {
                 <!-- Password -->
                 <div class="input_container">
                     <label for="password">Password : </label>
-                    <input type="text" name="password" required>
+                    <input type="password" name="password" required>
                 </div>
 
                 <!-- Captcha -->
