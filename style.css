@@ -16,23 +16,9 @@ nav {
   top: 0;
   left: 0;
   z-index: 10;
-
-  /* border-bottom: 0.5px solid var(--purple-900); */
 }
 
-nav::before {
-  /* content: ""; */
-  /* background: var(--purple-50); */
-  opacity: 0.3;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
-}
-
-nav > h1 {
+nav h1 {
   font-family: var(--tertiary-font);
   font-size: var(--text-3xl);
   color: var(--gray-100);

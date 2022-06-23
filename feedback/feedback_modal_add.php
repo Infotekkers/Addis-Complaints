@@ -188,11 +188,26 @@ if ($_POST) {
 
     <section class="feedback_modal" id="feedback-modal">
 
-
         <form class="feedback_modal_form_container" action="./feedback_modal_add.php" method="POST" enctype="multipart/form-data" autocomplete="off">
 
-            <div class="feedback_modal_file_upload_container" width="100%" height="500px">
-                <input type="file" name="file">
+            <div class="form-left-wrapper">
+                <h2>Lorem ipsum dolor sit amet.</h2>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus, fugit vero. Numquam nostrum at quam nisi delectus dolore obcaecati, aspernatur, accusantium dolorum repudiandae, quas alias non cumque. Expedita, possimus esse.</p>
+                <div class="feedback_modal_file_upload_container" width="100%" height="500px">
+                    <input type="file" name="file">
+                    <div class="no-value">
+                        Click to choose, or drag and drop a file
+                    </div>
+
+                    <div class="file-add-success">
+                        <svg viewBox="0 0 512 512" width="100" title="check-circle">
+                            <path d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z" />
+                        </svg>
+                        <h3>File received!</h3>
+
+                        <p>Click to edit response</p>
+                    </div>
+                </div>
             </div>
 
             <div class="feedback_modal_form">
@@ -201,7 +216,7 @@ if ($_POST) {
                 <input type="text" name="antiCSRFToken" value="<?= $_SESSION['antiCSRFToken'] ?? '' ?>" hidden>
                 <!-- Name -->
                 <div class="feedback_form_input_container">
-                    <label for="fullName" class="feedback_form_label">Full Name</label>
+                    <label for="fullName" class="feedback_form_label">Full name</label>
                     <input type="text" name="full_name" required>
                 </div>
 
@@ -228,7 +243,7 @@ if ($_POST) {
                 <div class="feedback_form_input_container">
                     <label for="comment" class="feedback_form_label">Comment</label>
                     <!-- <span id="word-count">0/100</span> -->
-                    <span>(500 characters minimum)</span>
+                    <span>*500 characters minimum</span>
                     <textarea name="comment" cols="30" rows="12" minlength="500" required></textarea>
                 </div>
 
@@ -240,6 +255,7 @@ if ($_POST) {
 
                 <!-- submit -->
                 <div class=" feedback_submit_button_container">
+                    <a href="../dashboard/home.php">Back to home</a>
                     <input type="submit">
                 </div>
             </div>
@@ -250,6 +266,20 @@ if ($_POST) {
             document.getElementById("close-modal").addEventListener("click", () => {
                 document.getElementById("feedback-modal").style.display = "none";
             })
+        </script>
+        <script>
+            const fileInputWrapper = document.querySelector(".feedback_modal_file_upload_container");
+            const fileInput = document.querySelector("input[type='file']");
+
+            fileInput.addEventListener("change", handleChange);
+
+            function handleChange() {
+                if (fileInput.value) {
+                    fileInputWrapper.classList.add("file-added");
+                } else {
+                    fileInputWrapper.classList.remove("file-added");
+                }
+            }
         </script>
     </section>
 </body>

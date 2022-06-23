@@ -19,7 +19,7 @@
 }
 .login_page_right_container {
   width: 55%;
-  background: linear-gradient(to bottom, #5e166151, #862f8447),
+  background: linear-gradient(to bottom, #2b022d87, #3506348b),
     url("../../assets/img/addis-ababa-2.jpg");
   display: flex;
   flex-direction: column;
