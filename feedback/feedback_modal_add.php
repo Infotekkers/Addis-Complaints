@@ -288,8 +288,8 @@ if ($_POST) {
         //     document.getElementById("feedback-modal").style.display = "none";
         // })
 
-        // document.getElementById("websiteLabel").style.display = "none"
-        // document.getElementById("websiteField").style.display = "none"
+        document.getElementById("websiteLabel").style.display = "none"
+        document.getElementById("websiteField").style.display = "none"
         </script>
         <script>
         const fileInputWrapper = document.querySelector(".feedback_modal_file_upload_container");
