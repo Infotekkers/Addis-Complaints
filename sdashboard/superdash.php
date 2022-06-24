@@ -96,7 +96,7 @@ if ($_POST) {
         if ($row['success'] == "true") {
             registerSuperAdmin($connection);
         } else {
-            showNotification("Captcha Failed");
+            showNotification("Captcha failed");
         }
     } catch (Exception $e) {
         showNotification("Something Went Wrong");

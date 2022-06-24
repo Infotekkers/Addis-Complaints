@@ -69,12 +69,12 @@
 .add-feedback-button {
   background: none;
   border: none;
-  letter-spacing: 0.25;
+  letter-spacing: 0.25px;
   cursor: pointer;
   width: 200px;
   height: 35px;
   font-weight: 600;
-  font-size: 18;
+  font-size: var(--text-regular);
 }
 .feedback_card {
   height: 260px;
@@ -170,9 +170,9 @@
 }
 
 /* Track */
-::-webkit-scrollbar-track {
-  /* background: #5e166187; */
-}
+/* ::-webkit-scrollbar-track {
+  background: #5e166187; 
+} */
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
