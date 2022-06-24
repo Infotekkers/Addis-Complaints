@@ -2,7 +2,7 @@
 
 
 include "../../config/db/superadmin.php";
-include "./inc/redirect.php";
+include "../../inc/redirect.php";
 $base_url = "http://localhost:3000";
 
 

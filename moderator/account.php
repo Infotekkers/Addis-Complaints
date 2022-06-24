@@ -1,10 +1,9 @@
 <?php
 
 
-include "../../config/db/admin.php";
-include "../inc/redirect.php";
+include "../config/db/admin.php";
 $base_url = "http://localhost:3000";
-
+include "../inc/redirect.php";
 session_start();
 session_regenerate_id();
 

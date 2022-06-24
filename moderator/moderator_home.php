@@ -1,8 +1,8 @@
 <?php
 
-include "../../config/db/admin.php";
-include "../inc/redirect.php";
+include "../config/db/admin.php";
 $base_url = "http://localhost:3000";
+include "../inc/redirect.php";
 
 session_start();
 session_regenerate_id();
@@ -135,9 +135,19 @@ $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
 
                 foreach ($feedbackResult as $feedback) {  ?>
 
-            <<<<<<< HEAD <div class="feedback_card">
+            <div class="feedback_card">
                 <!-- Status Indicator -->
-                <div class="feedback_card_status_indicator"></div>
+                <?php
+                        if ($feedback['filePath'] == '') { ?>
+                <div class="feedback_card_status_indicator red-indicator">
+                    ❌
+                </div>
+                <?php } else { ?>
+                <div class="feedback_card_status_indicator green-indicator">
+                    ✅
+                </div>
+                <?php   }
+                        ?>
                 <div class="feedback_card_body_container">
                     <!-- Controls -->
                     <div class="feedback_card_controls_container">
@@ -165,34 +175,16 @@ $feedbackResult = $feedbackResult->fetch_all(MYSQLI_ASSOC);
                         <p> <?php echo $feedback['date'] ?></p>
                     </div>
                 </div>
-                =======
-                <div class="feedback_card">
-                    <!-- Status Indicator -->
-                    <?php
-                            if ($feedback['filePath'] == '') { ?>
-                    <div class="feedback_card_status_indicator red-indicator">
-                        ❌
-                    </div>
-                    <?php } else { ?>
-                    <div class="feedback_card_status_indicator green-indicator">
-                        ✅
-                    </div>
-                    <?php   }
-                            ?>
-                    <div class="feedback_card_body_container">
-                        <!-- Controls -->
-                        <div class="feedback_card_controls_container">
-                            >>>>>>> f0cd0124c576ddf69344e1beecadc6104efca7f5
 
-                        </div>
+            </div>
 
-                        <?php }
-                }
-                        ?>
-                    </div>
+            <?php }
+            }
+            ?>
+        </div>
 
 
-                </div>
+    </div>
 </body>
 
 </html>
