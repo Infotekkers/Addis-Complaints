@@ -1,21 +1,13 @@
 <?php
 
-if (isset($_SESSION['uid'])) {
-    header("location:../../dashboard/home.php");
-}
 
-include "../../config/db.php";
-
-include "../../config/db/user.php";
+include "../../config/db/superadmin.php";
 include "../../inc/redirect.php";
 $base_url = "http://localhost:3000";
+
+
 session_start();
 session_regenerate_id();
-
-if (isset($_SESSION['uid'])) {
-    Redirect("$base_url/dashboard/home.php");
-    exit;
-}
 
 $show_notification_message = false;
 $notification_message_content = "";
@@ -36,7 +28,7 @@ function loginUser($connection)
         $passwordInput = filter_var($_POST['password'], FILTER_SANITIZE_EMAIL);
         $session = filter_var($_POST['session'], FILTER_SANITIZE_SPECIAL_CHARS);
 
-        $stmt = $connection->prepare("SELECT password,isActive,attemptCount FROM users WHERE email=?");
+        $stmt = $connection->prepare("SELECT password FROM super_admin WHERE email=?");
         $stmt->bind_param('s', $emailInput);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -46,13 +38,6 @@ function loginUser($connection)
 
         if ($session != "123456gotem") {
             showNotification("Malicious Attempt.");
-
-            // LOCK
-            if (!empty($result)) {
-                $stmt = $connection->prepare("UPDATE users SET attemptCount=5 WHERE email=?");
-                $stmt->bind_param('s', $emailInput);
-                $stmt->execute();
-            }
         } else {
             // no account
             if (empty($result)) {
@@ -60,44 +45,25 @@ function loginUser($connection)
             } else {
                 $possiblePassword = $result['password'];
                 // account locked
-                if ($result['attemptCount'] == 5) {
-                    showNotification("Account has been locked on too many attempts.");
-                } else if (password_verify($passwordInput,  $possiblePassword)) {
+                if (password_verify($passwordInput,  $possiblePassword)) {
                     // if deactivated
-                    if ($result['isActive'] == 0) {
-                        showNotification("Account has been deactivated by admin.");
-                    } else {
-                        //   get user info and redirect
-                        $stmt = $connection->prepare("SELECT id,full_name FROM users WHERE email=?");
-                        $stmt->bind_param('s', $emailInput);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        $result = $result->fetch_array(MYSQLI_ASSOC);
 
-                        $_SESSION['uid'] = $result['id'];
-                        $_SESSION['name'] = $result['full_name'];
-
-
-
-                        // setcookie("SSID", $_SESSION['uid'], time() + 2 * 24 * 60 * 60, "/", "/", secure: true, httponly: true);
-
-                        // reset attempt count
-                        $stmt = $connection->prepare("UPDATE users SET attemptCount=0 WHERE email=?");
-                        $stmt->bind_param('s', $emailInput);
-                        $stmt->execute();
-
-                        Redirect("$base_url/dashboard/home.php");
-                        exit;
-                    }
-                } else if ($result['password']) {
-
-                    // increase attempt count
-                    $newAttemptCount = $result['attemptCount'] + 1;
-                    $remainingAttempts = 5 - $newAttemptCount;
-                    $stmt = $connection->prepare("UPDATE users SET attemptCount=? WHERE email=?");
-                    $stmt->bind_param('is', $newAttemptCount, $emailInput);
+                    //   get user info and redirect
+                    $stmt = $connection->prepare("SELECT id FROM super_admin WHERE email=?");
+                    $stmt->bind_param('s', $emailInput);
                     $stmt->execute();
-                    showNotification("Invalid email/password combination. " . $remainingAttempts . " tries remaining!");
+                    $result = $stmt->get_result();
+                    $result = $result->fetch_array(MYSQLI_ASSOC);
+
+                    $_SESSION['uid'] = $result['id'];
+
+
+
+
+                    Redirect("$base_url/sdashboard/superdash.php");
+                    exit;
+                } else if ($result['password']) {
+                    showNotification("Invalid email/password combination.");
                 }
             }
         }
@@ -112,17 +78,21 @@ function loginUser($connection)
 // on post
 if ($_POST) {
     try {
-        $secret = "6LdM_jMgAAAAAHomg-xBvg2IXJMljM-mJMEPAtU8";
-        $response = $_POST['g-recaptcha-response'];
-        $remoteip = $_SERVER['REMOTE_ADDR'];
-        $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response&remoteip=$remoteip";
-        $data = file_get_contents($url);
-        $row = json_decode($data, true);
-        if ($row['success'] == "true") {
+        try {
+            $secret = "6LdM_jMgAAAAAHomg-xBvg2IXJMljM-mJMEPAtU8";
+            $response = $_POST['g-recaptcha-response'];
+            $remoteip = $_SERVER['REMOTE_ADDR'];
+            $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response&remoteip=$remoteip";
+            $data = file_get_contents($url);
+            $row = json_decode($data, true);
+            if ($row['success'] == "true") {
 
-            loginUser($connection);
-        } else {
-            showNotification("Captcha failed");
+                loginUser($connection);
+            } else {
+                showNotification("Captcha Failed");
+            }
+        } catch (Exception $e) {
+            showNotification("Something Went Wrong");
         }
     } catch (Exception $e) {
         showNotification("Something Went Wrong");
@@ -137,7 +107,7 @@ if ($_POST) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Super Admin Login</title>
     <link rel="stylesheet" href="style.css">
 
 </head>
@@ -148,7 +118,7 @@ if ($_POST) {
     <!-- Left -->
     <section class="login_page_left_container">
 
-        <p class="login_page_left_title">Addis Complaints</div>
+        <p class="login_page_left_title">Addis Complaints - Super Admin </div>
 
         <form action="" class="login_page_form_container" method="POST" autocomplete="off">
             <!-- Title -->
@@ -192,11 +162,6 @@ if ($_POST) {
 
                 <!-- Create Button -->
                 <input type="submit" value="Log in" class="login_page_button">
-
-
-                <!-- Login redirect -->
-                <div class="login_page_redirect">Don't have an account? <a href="../register/register.php">Sign up</a>
-                </div>
             </div>
 
 

@@ -8,20 +8,26 @@
 
 nav {
   width: 100%;
-  height: 5vh;
-  /* background-color: var(--primary-purple); */
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: end;
-  padding: 0 2%;
-  position: absolute;
+  padding: var(--spacing-base) var(--spacing-xlarge);
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 10;
 }
 
+nav h1 {
+  font-family: var(--tertiary-font);
+  font-size: var(--text-3xl);
+  color: var(--gray-100);
+}
+
 nav > a {
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: bold;
+  font-size: var(--text-base);
+  font-weight: 500;
+  font-family: var(--secondary-font);
+  color: var(--gray-100);
 }

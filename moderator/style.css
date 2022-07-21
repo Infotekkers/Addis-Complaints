@@ -1,84 +1,102 @@
 @import url("../../style.css");
 
-.dash_main_container {
+.admin_dash_container {
   width: 100%;
   height: 100vh;
-  background: linear-gradient(to bottom, #2b022d87, #3506348b),
-    url("../../assets/img/addis-ababa-3.jpg");
+  background: linear-gradient(to bottom, #5e166187, #862f848b),
+    url("../../assets/img/addis-ababa-4.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-
-  padding: 0 var(--spacing-xlarge);
+  padding: 0 12px;
+  padding-top: 80px;
 }
 
-.dash_main_left_container > h1 {
-  font-family: var(--primary-font);
-  font-weight: bold;
-  letter-spacing: 0.55px;
-  font-size: var(--text-6xl);
-  color: var(--gray-50);
-  line-height: 1.2;
-}
-.dash_main_left_container > h1 > span {
-  background: var(--gray-200);
-  color: var(--gray-700);
-  transform: skewX(-10deg);
-  display: inline-block;
-}
-
-.dash_main_left_container > p {
-  max-width: 75ch;
-  margin-top: var(--spacing-small);
-  font-size: var(--text-base);
-  font-family: var(--secondary-font);
-  font-weight: 500;
-  line-height: 1.5;
-
-  color: var(--gray-50);
-}
-.dash_main_right_container {
+.admin_dash_userlist_container {
   width: 45%;
   height: 100%;
-  /* background-color: rgba(0, 0, 0, 0.05); */
   overflow-y: scroll;
+  padding: 0 18px;
+  padding-bottom: 28px;
+  background-color: rgba(0, 0, 0, 0.25);
 }
 
-.add-feedback-button-container {
-  background-color: rgba(255, 255, 0);
-  width: 230px;
-  margin-top: 40px;
-  display: flex;
-  align-items: center;
-  position: relative;
-  z-index: 1;
+.user_card {
+  margin-top: 28px;
+  width: 100%;
   padding: 5px 18px;
-  border-radius: 45px;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease 0s;
-  cursor: pointer;
-  outline: none;
-}
-.add-feedback-button-container > img {
-  width: 22px;
-  height: 22px;
+  height: 55px;
+  background-color: rgba(0, 0, 0, 0.365);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.65);
+  color: rgba(255, 255, 255, 0.85);
+  transition: 0.3s;
+  display: flex;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 12px;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -ms-border-radius: 12px;
+  -o-border-radius: 12px;
 }
 
-.add-feedback-button {
-  background: none;
-  border: none;
-  letter-spacing: 0.25px;
-  cursor: pointer;
-  width: 200px;
-  height: 35px;
-  font-weight: 600;
-  font-size: var(--text-regular);
+.user_card_info {
+  width: 65%;
+  height: 100%;
+  display: flex;
 }
+
+.user_card_text_info > p:nth-of-type(1) {
+  font-size: 18px;
+  font-family: var(--secondary-font);
+  line-height: 1.5;
+  letter-spacing: 0.1px;
+  font-weight: bold;
+  text-overflow: ellipsis;
+}
+
+.user_card_text_info > p:nth-of-type(2) {
+  font-size: 13px;
+  font-family: var(--primary-font);
+  letter-spacing: 0.1px;
+  text-overflow: ellipsis;
+}
+
+.user_card_text_info {
+  width: 75%;
+  height: 100%;
+}
+
+.user_card_account_info {
+  width: 20%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.user_card_controls {
+  width: 30%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 100%;
+}
+
+.admin_dash_feedback_container {
+  width: 52%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /*justify-content: center; */
+  color: rgba(255, 255, 255, 0.85);
+  overflow-y: scroll;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
 .feedback_card {
   height: 260px;
-  width: 85%;
+  width: 95%;
   margin-left: auto;
   margin-right: auto;
   margin-top: 36px;
@@ -170,9 +188,9 @@
 }
 
 /* Track */
-/* ::-webkit-scrollbar-track {
-  background: #5e166187; 
-} */
+::-webkit-scrollbar-track {
+  background: #5e166187;
+}
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
@@ -184,32 +202,15 @@
   background: #555;
 }
 
-.no-comment-yet-container {
-  width: 100%;
-  height: 100%;
+.no-data-center-container {
   display: grid;
   place-items: center;
-}
-
-.no-comment-yet-container > h1 {
-  font-family: var(--primary-font);
+  height: 100%;
   color: rgba(255, 255, 255, 0.85);
-  letter-spacing: 0.5px;
+  font-family: var(--secondary-font);
+  letter-spacing: 0.55px;
 }
 
-.edit-form-button,
-.delete-form-button {
-  border: none;
-  font-size: 12px;
-  width: 44px;
-  padding: 2px 4px;
-}
-.edit-form-button {
-  background-color: greenyellow;
-}
-.delete-form-button {
-  background-color: red;
-}
 .red-indicator {
   border: 3px solid red;
   border-radius: 50%;

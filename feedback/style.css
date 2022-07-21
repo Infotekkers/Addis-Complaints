@@ -3,44 +3,118 @@
 body {
   width: 100%;
   height: 100vh;
-  background: linear-gradient(to bottom, #5e166187, #862f848b),
+  background: linear-gradient(to bottom, #2b022d87, #3506348b),
     url("../../assets/img/addis-ababa-3.jpg");
   background-size: cover;
   background-repeat: no-repeat;
-  display: flex;
-  justify-content: space-between;
-  padding-top: 80px;
 }
 .feedback_modal {
   height: 100vh;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.25);
   position: absolute;
   top: 0;
   left: 0;
   z-index: 3;
-  padding-top: 80px;
+  display: grid;
+  place-items: center;
+}
+
+.feedback_modal > h1 {
+  color: var(--gray-100);
+  font-size: var(--text-base);
+  text-align: left;
+}
+.feedback_modal_form {
+  width: 500px;
 }
 
 .feedback_modal_form_container {
-  margin: 60px 15%;
   /* background-color: ; */
   display: flex;
+  gap: var(--spacing-medium);
   justify-content: space-between;
 }
+
+.form-left-wrapper {
+  max-width: 400px;
+}
+
+.form-left-wrapper > h2,
+.form-left-wrapper > p {
+  font-family: var(--primary-font);
+}
+
+.form-left-wrapper > h2 {
+  font-size: var(--text-regular);
+  color: var(--gray-200);
+}
+
+.form-left-wrapper > p {
+  color: var(--gray-300);
+  margin-top: var(--spacing-small);
+  line-height: 1.5;
+}
+
 .feedback_modal_file_upload_container {
-  width: 20%;
-  height: 100%;
+  width: 100%;
+  height: 300px;
+  margin: 0 auto;
+  margin-top: var(--spacing-base);
+  border-radius: 2px;
 
-  background-color: yellow;
+  background-color: var(--gray-100);
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.form-left-wrapper input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
 }
 
-.feedback_modal_form {
-  width: 55%;
-  /* height: 100%; */
+.file-add-success {
+  display: none;
+  color: var(--gray-700);
 }
+
+.file-add-success svg {
+  width: 32px;
+  fill: lime;
+  margin-bottom: var(--spacing-base);
+}
+
+.file-add-success h3 {
+  font-size: var(--text-3xl);
+  font-family: var(--primary-font);
+}
+
+.feedback_modal_file_upload_container.file-added .file-add-success {
+  display: block;
+}
+
+.feedback_modal_file_upload_container.file-added .no-value {
+  display: none;
+}
+
+/* input[type="file"]::file-selector-button {
+  border: 2px solid #6c5ce7;
+  padding: 0.2em 0.4em;
+  border-radius: 0.2em;
+  color: white;
+  background-color: #a29bfe;
+  transition: 1s;
+}
+
+input[type="file"]::before {
+  color: white;
+} */
+
 .feedback_form_input_container {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-base);
   display: flex;
   flex-direction: column;
 }
@@ -49,50 +123,101 @@ body {
   font-size: 15px;
   font-family: var(--secondary-font);
   margin-bottom: 5px;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--gray-50);
 }
 
-input[type="text"] {
-  height: 28px;
+.feedback_form_input_container {
+  position: relative;
+}
+
+.feedback_form_input_container > span {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+
+  padding-right: var(--spacing-2xsmall);
+  text-align: right;
+  font-size: var(--text-sm);
+  color: ef4444;
+  background: white;
+}
+
+input[type="text"],
+select {
   outline: none;
-  padding: 12px;
-  border: 1px solid white;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
-  width: 60%;
+  padding: var(--spacing-xsmall) var(--spacing-small);
+  border-radius: 2px;
+  border: none;
+
+  width: 100%;
 }
 
 textarea {
-  width: 90%;
+  width: 100%;
   outline: none;
-  padding: 12px;
+  padding: var(--spacing-xsmall) var(--spacing-small);
   border: 1px solid white;
-  border-radius: 5px;
+  border-radius: 2px;
   resize: none;
 }
 
 .feedback_submit_button_container {
   margin-top: 28px;
-  width: 90%;
   display: flex;
   justify-content: flex-end;
+  align-items: stretch;
 }
-.feedback_modal_form input[type="submit"] {
-  margin-left: calc(100% - 150px);
-  width: 150px;
-  height: 30px;
-  border: none;
-  background-color: var(--primary-purple);
-  color: rgba(255, 255, 255, 0.9);
+
+.feedback_submit_button_container > a {
+  color: var(--gray-200);
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0 var(--spacing-medium);
+  display: flex;
+  align-items: center;
   font-family: var(--primary-font);
+  border-radius: 2px;
+}
+
+.feedback_submit_button_container > a:hover {
+  background: rgb(0, 0, 0, 0.2);
+}
+
+.feedback_modal_form input[type="submit"] {
+  width: 150px;
+  padding: var(--spacing-small) 0;
+  border: none;
+  background: #ffff00;
+  cursor: pointer;
+  color: var(--gray-700);
+  font-family: var(--primary-font);
+  font-size: var(--text-base);
   letter-spacing: 0.15px;
-  font-weight: 500;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
+  font-weight: 900;
+  border-radius: 2px;
+
+  transition: border-radius 300ms;
+}
+
+.feedback_modal_form input[type="submit"]:hover {
+  border-radius: 50px;
+}
+
+.file-download-button {
+  text-decoration: none;
+  background-color: rgba(255, 255, 0, 0.65);
+  margin-left: auto;
+  margin-right: auto;
+  width: 130px;
+  margin-top: 40px;
+  display: grid;
+  place-items: center;
+  padding: 5px 18px;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  color: black;
 }

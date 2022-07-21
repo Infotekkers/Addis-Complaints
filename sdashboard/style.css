@@ -1,0 +1,81 @@
+@import url("../../style.css");
+
+.super_dash_container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #5e166187, #862f848b),
+    url("../../assets/img/addis-ababa-5.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 12px;
+  padding-top: 80px;
+}
+.container-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-reg-form {
+  width: 50%;
+  margin-top: 36px;
+  margin-left: auto;
+  margin-right: auto;
+  height: 460px;
+  padding: 16px 32px;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+input[type="text"],
+input[type="password"] {
+  background-color: transparent;
+  border: 1.58px solid var(--primary-purple);
+  width: 80%;
+  height: 32px;
+  outline: none;
+  padding: 1px 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+
+label {
+  line-height: 1.5;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-family: var(--secondary-font);
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.spacer {
+  height: 16px;
+}
+
+form > h1 {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.register_admin_button {
+  margin-top: 36px;
+  margin-left: calc(100% - 150px);
+  width: 150px;
+  height: 36px;
+  border: none;
+  background-color: var(--primary-purple);
+  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--primary-font);
+  letter-spacing: 0.15px;
+  font-weight: 500;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+}
