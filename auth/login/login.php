@@ -4,9 +4,8 @@ if (isset($_SESSION['uid'])) {
     header("location:../../dashboard/home.php");
 }
 
-include "../../config/db.php";
-
 include "../../config/db/user.php";
+
 include "../../inc/redirect.php";
 $base_url = "http://localhost:3000";
 session_start();
